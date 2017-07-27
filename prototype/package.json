@@ -1,0 +1,15 @@
+{
+  "name": "gradebot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "chrome-remote-interface": "^0.24.2",
+    "express": "^4.15.3",
+    "nodemon": "^1.11.0"
+  }
+}
