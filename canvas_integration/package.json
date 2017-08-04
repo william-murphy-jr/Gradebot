@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "body-parser": "^1.17.2",
+    "ejs": "^2.5.7",
     "express": "^4.15.3",
     "ims-lti": "^3.0.2",
     "localtunnel": "^1.8.3",

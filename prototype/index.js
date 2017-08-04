@@ -2,12 +2,31 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const CDP = require('chrome-remote-interface')
+const chromeLauncher = require('chrome-launcher')
+// const log = require('lighthouse-logger');
+// log.setLevel('info');
+
+const selfLaunch = true
+
+function launchChrome(headless=false) {
+  return chromeLauncher.launch({
+    // port: 9222,
+    chromeFlags: [
+      '--window-size=412,732',
+      '--disable-gpu',
+      headless ? '--headless' : ''
+    ]
+  });
+}
+
 
 async function runTest(code,tests,debugLevel) {
   const results = {}
   try {
     console.log('looking for chrome headless. (launch chrome --headless --remote-debugging-port=9222')
     var client = await CDP();
+    
+    // const version = await CDP.Version({port: chrome.port});
     console.log('got chrome headless')
     const {Network, Page, Runtime} = client;
     Network.requestWillBeSent((params) => {
@@ -45,6 +64,14 @@ app.post('/api/grade', async (req, res) => {
   res.send(results)
 })
 
-app.listen(3000, function () {
-  console.log('Gradebot listening on port 3000!')
+const port = 3000
+app.listen(port, function () {
+  console.log(`Gradebot listening on ${port}`)
+
+  launchChrome().then(chrome => {
+    console.log(`Chrome debuggable on port: ${chrome.port}`);
+
+    // chrome.kill();
+  });
+
 })

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>LTI Tool Thingie</title>
+    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+    <script src="third-party/ace.js"></script>
+    <script src="third-party/mode-javascript.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+const assignment = <%- JSON.stringify(assignment) %>
+    </script>
+    <script type="text/babel" src="lti.js">
+    </script>
+    <style>
+      #editor {
+      width:650px;
+      height:300px;
+      border: 1px solid black;
+    }
+    </style>
+<pre id="editor">
+<%- assignment.template %>      
+</pre>
+    
+<script>
+  var editor = ace.edit("editor");
+    //editor.setTheme("ace/theme/twilight");
+    editor.session.setMode("ace/mode/javascript");
+</script>
+    
+lti view
+    <pre>
+
+      
+pre
+<%- JSON.stringify(provider,null,2) %>
+  
+<%- JSON.stringify(body,null,2) %>
+</pre>
+
+  </body>
+</html>
+
+
