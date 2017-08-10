@@ -5,7 +5,7 @@ const lti = require('ims-lti')
 const ejs = require('ejs')
 const fetch = require('node-fetch')
 const Remarkable = require('remarkable')
-const md = new Remarkable({html:true,linkify:true})
+const md = new Remarkable({html:true,linkify:true,linkTarget:"_blank"})
 
 function getAssignment(id) {
   /* TODO -- grab this data from gitlab repo */
