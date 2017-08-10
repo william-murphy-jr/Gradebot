@@ -38,7 +38,7 @@ async function testCanvasAPI() {
 }
 
 app.get('/gitlab/:org/:repo/:page', async (req, res) => {
-  const url = `https://gitlab.tlmworks.org/${req.params.org}/${req.params.repo}/raw/master/${req.params.page}.md`
+  const url = `https://gitlab.tlmworks.org/${req.params.org}/${req.params.repo}/wikis/${req.params.page}.md`
   console.log('get url',url)
   const resp = await fetch(url)
   const text = await resp.text()
