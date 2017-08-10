@@ -24,21 +24,13 @@ const assignment = <%- JSON.stringify(assignment) %>
       border: 1px solid black;
     }
     </style>
-<pre id="editor">
+<!--pre id="editor">
 <%- assignment.template %>      
-</pre>
+</pre-->
     
-<script>
-  var editor = ace.edit("editor");
-    //editor.setTheme("ace/theme/twilight");
-    editor.session.setMode("ace/mode/javascript");
-</script>
     
-lti view
-    <pre>
-
-      
-pre
+<pre>
+DEBUG:
 <%- JSON.stringify(provider,null,2) %>
   
 <%- JSON.stringify(body,null,2) %>

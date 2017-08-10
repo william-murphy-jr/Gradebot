@@ -8,9 +8,9 @@ const chromeLauncher = require('chrome-launcher')
 
 const selfLaunch = true
 
-function launchChrome(headless=false) {
+function launchChrome(headless=true) {
   return chromeLauncher.launch({
-    // port: 9222,
+    port: 9222,
     chromeFlags: [
       '--window-size=412,732',
       '--disable-gpu',
@@ -25,8 +25,6 @@ async function runTest(code,tests,debugLevel) {
   try {
     console.log('looking for chrome headless. (launch chrome --headless --remote-debugging-port=9222')
     var client = await CDP();
-    
-    // const version = await CDP.Version({port: chrome.port});
     console.log('got chrome headless')
     const {Network, Page, Runtime} = client;
     Network.requestWillBeSent((params) => {
@@ -38,8 +36,14 @@ async function runTest(code,tests,debugLevel) {
     // function definition
     console.log('running user function definition',code)
     results.code = await Runtime.evaluate({expression:code})
+    if (! Array.isArray(tests)) {
+      tests = [tests]
+    }
     console.log('running tests',tests)
-    results.tests = await Runtime.evaluate({expression:tests})
+    results.tests = []
+    for (const test of tests) {
+      results.tests.push( await Runtime.evaluate({expression:test}) )
+    }
   } catch (err) {
     console.error(err);
   } finally {
@@ -70,7 +74,6 @@ app.listen(port, function () {
 
   launchChrome().then(chrome => {
     console.log(`Chrome debuggable on port: ${chrome.port}`);
-
     // chrome.kill();
   });
 
