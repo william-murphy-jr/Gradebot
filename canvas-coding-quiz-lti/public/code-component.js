@@ -70,7 +70,13 @@ class CodeComponent extends React.Component {
     var result = await submit_solution(this._editor.getValue(), this.state, assignment)
     if (result.success) {
       this.setState({completed:true})
+    } else {
+      this.setState({submission:result})
     }
+  }
+  async onReset() {
+    this._editor.setValue(assignment.challengeSeed.join('\n'),-1)
+
   }
   async onCheck() {
     console.log('submit/check',this)
@@ -78,27 +84,31 @@ class CodeComponent extends React.Component {
     const user_code = this._editor.getValue()
     const test_user_code = assignment.tests
     const sub_result = await submit_code(user_code, assignment)
-    this.setState({submitting:false, submission:sub_result})
+    this.setState({submitting:false, checked:sub_result})
   }
   onChange() {
   }
   constructor() {
     super()
   }
-  componentDidMount() {
-    this.setState(initstate)
+  resetSolution() {
     var t = ''
 
-    if (initstate.submitted) {
+    if (initstate.submitted && initstate.submitted.body) {
       t = initstate.submitted.body
     } else {
       for (let line of assignment.challengeSeed) {
         t += line + '\n'
       }
     }
-    document.getElementById('editor').textContent = t
+    //document.getElementById('editor').textContent = t
+    this._editor.setValue(t,-1)
+  }
+  componentDidMount() {
+    this.setState(initstate)
     var editor = ace.edit("editor");
     this._editor = editor
+    this.resetSolution()
     //editor.setTheme("ace/theme/twilight");
     editor.session.setMode("ace/mode/javascript");
   }
@@ -108,16 +118,26 @@ class CodeComponent extends React.Component {
 
     if (this.state) {
       if (this.state.completed) {
-        return (<div>All done with this assignment!</div>)
+        return (<div>Great work! All done with this assignment!</div>)
       }
       
-      if (this.state.submission && this.state.submission.result) {
-        if (this.state.submission.result.message) msg = this.state.submission.result.message
-        if (this.state.submission.result.passed) {
+      if (this.state.submitted && this.state.submitted.grade) {
+        msg = `You submitted this solution at ${this.state.submitted.submitted_at}`
+      }
+
+      if (this.state.submission && this.state.submission && this.state.submission.error) {
+        msg = `Submission status: ${this.state.submission.error}`
+      }
+
+      if (this.state.checked && this.state.checked.result) {
+        if (this.state.checked.result.message) msg = this.state.checked.result.message
+        if (this.state.checked.result.passed) {
           submit = (<input type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />)
           msg = 'Great! Your code passed all tests.'
         }
       }
+
+      
     }
     
     return  (
@@ -131,8 +151,10 @@ class CodeComponent extends React.Component {
         <span dangerouslySetInnerHTML={{__html:msg}}></span>
 <br />
         <input type="button" defaultValue="Check Code"
-      onClick={this.onCheck.bind(this)}
-        />
+      onClick={this.onCheck.bind(this)} />
+        <input type="button" defaultValue="Reset Solution"
+      onClick={this.onReset.bind(this)} />
+
       { submit }
         <pre style={{display:'none'}}>
         {JSON.stringify(this.state,null,2)}

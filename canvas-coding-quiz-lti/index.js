@@ -51,23 +51,24 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
     var assignment = data.assignment
     var code = req.body.code
     var correct = req.body.state &&
-        req.body.state.submission &&
-        req.body.state.submission.result &&
-        req.body.state.submission.result.passed
+        req.body.state.checked &&
+        req.body.state.checked.result &&
+        req.body.state.checked.result.passed
 
     if (!provider.outcome_service) {
-      res.send({error:'must be a student'})
+      res.send({error:'you must be a student to submit'})
       return
     }
-    console.log('collected vars')
+    function cb(err, result) {
+      console.log('grade submission result',err,result)
+      res.send({error:err,success:result})
+    }
+    console.log('user submitting grade correct:',correct)
     if (correct) {
-      function cb(err, result) {
-        console.log('grade submission result',err,result)
-        res.send({error:err,success:result})
-      }
       provider.outcome_service.send_replace_result_with_text( 1, code, cb )
     } else {
-      provider.outcome_service.send_replace_result_with_text( 0, code, cb )
+      res.send({error:'incorrect solution.'})
+      //provider.outcome_service.send_replace_result_with_text( 0, code, cb )
     }
     
   } else {
@@ -92,6 +93,7 @@ app.post('/lti', async (req, res) => {
       const user_id = req.body.custom_canvas_user_id
       
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
+      const assignments_link = `/courses/${course_id}/assignments`
       
       console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
@@ -107,7 +109,8 @@ app.post('/lti', async (req, res) => {
           body:req.body,
           assignment:assignment,
           session: sessid,
-          submitted: submitted
+          submitted: submitted,
+          assignments_link: assignments_link
         }
       }
       if (false) { // debug
