@@ -1,7 +1,7 @@
 function runTestIframe(text, challenge) {
   return new Promise( res => {
     var iframe = document.createElement('iframe')
-    iframe.src = 'testframe.html'
+    iframe.src = 'iframe-grader/testframe.html'
     iframe.style.display='none'
     document.querySelector('.test-iframe').innerHTML = ''
     document.querySelector('.test-iframe').appendChild(iframe)
@@ -26,6 +26,7 @@ async function submit_code(user_code, assignment) {
 }
 
 async function submit_solution(user_code, state, assignment) {
+  /* submit user's code solution to be graded */
   const API_ENDPOINT = '/lti-grade'
   const body = {
     code: user_code,
@@ -45,7 +46,7 @@ async function submit_solution(user_code, state, assignment) {
 }
 
 async function submit_code_server(user_code, test_user_code) {
-  // cheat-free version
+  // cheat-free version (not working yet)
   const API_ENDPOINT = '/api/grade'
   const body = {
     code:user_code,
