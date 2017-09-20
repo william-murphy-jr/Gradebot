@@ -85,7 +85,7 @@ app.post('/lti', async (req, res) => {
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
-      res.send(err + ". check your consumer key and consumer secret.")
+      res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
     } else {
 
       const assignment_id = req.body.custom_canvas_assignment_id
