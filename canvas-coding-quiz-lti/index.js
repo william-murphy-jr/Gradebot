@@ -11,7 +11,7 @@ const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
+  const fcc_includes = [ 'freecodecamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
   const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
   const fcc_index = {}
   for (let challenge of fcc_data.challenges) {

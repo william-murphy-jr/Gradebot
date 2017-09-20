@@ -25,6 +25,7 @@ function parselinks(resp) {
 }
 
 async function req(url, method="get",params=null) {
+  // make a canvas API request. automatically does pagination to grab all entries.
   const headers = {'Authorization':`Bearer ${config.canvas_api_token}`}
   var body = null
   if (params) {
@@ -216,5 +217,5 @@ async function go() {
 
 // go()
 // to get REPL + chrome inspector run this
-// node --inspect -i -e "$(<api.js)"
+// node --inspect -i -e "$(<canvas-api.js)"
 
