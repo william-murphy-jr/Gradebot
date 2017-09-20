@@ -16,9 +16,9 @@
   <body>
     <div id="root"></div>
     <script>
-const assignment = <%- JSON.stringify(assignment) %>
-// store a session for submission
-const sessid = "<%- session %>";
+const initstate = <%- JSON.stringify(initstate) %>
+const assignment = initstate.assignment
+const sessid = initstate.session
     </script>
     <script type="text/babel" src="code-component.js">
     </script>
@@ -38,18 +38,9 @@ const sessid = "<%- session %>";
       white-space: pre-wrap;
       }
     </style>
-<!--pre id="editor">
-<%- assignment.template %>      
-</pre-->
 
 <div style="display:none" class="test-iframe"></div>
     
-<pre style="display:none" class="debug">
-DEBUG:
-<%- JSON.stringify(provider,null,2) %>
-  
-<%- JSON.stringify(body,null,2) %>
-</pre>
 
   </body>
 </html>

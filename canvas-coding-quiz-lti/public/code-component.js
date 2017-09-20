@@ -86,9 +86,15 @@ class CodeComponent extends React.Component {
     super()
   }
   componentDidMount() {
+    this.setState(initstate)
     var t = ''
-    for (let line of assignment.challengeSeed) {
-       t += line + '\n'
+
+    if (initstate.submitted) {
+      t = initstate.submitted.body
+    } else {
+      for (let line of assignment.challengeSeed) {
+        t += line + '\n'
+      }
     }
     document.getElementById('editor').textContent = t
     var editor = ace.edit("editor");
@@ -99,15 +105,18 @@ class CodeComponent extends React.Component {
   render() {
     var msg = ''
     var submit = ''
-    if (this.state && this.state.completed) {
-      return (<div>All done with this assignment!</div>)
-    }
-    
-    if (this.state && this.state.submission && this.state.submission.result) {
-      if (this.state.submission.result.message) msg = this.state.submission.result.message
-      if (this.state.submission.result.passed) {
-        submit = (<input type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />)
-        msg = 'Great! Your code passed all tests.'
+
+    if (this.state) {
+      if (this.state.completed) {
+        return (<div>All done with this assignment!</div>)
+      }
+      
+      if (this.state.submission && this.state.submission.result) {
+        if (this.state.submission.result.message) msg = this.state.submission.result.message
+        if (this.state.submission.result.passed) {
+          submit = (<input type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />)
+          msg = 'Great! Your code passed all tests.'
+        }
       }
     }
     

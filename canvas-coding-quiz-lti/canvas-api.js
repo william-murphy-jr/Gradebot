@@ -59,18 +59,19 @@ async function req(url, method="get",params=null) {
     for (let result of results) {
       flat = flat.concat(result)
     }
+    console.log(`API resp ${url}`,flat)
     return flat
   }
 }
 
-async function create_or_get_assignment_group(course, name) {
-  const groups = await req(`/courses/${course.id}/assignment_groups`)
+async function create_or_get_assignment_group(cid, name) {
+  const groups = await req(`/courses/${cid}/assignment_groups`)
   for (var g of groups) {
     if (g.name == name) {
       return g
     }
   }
-  return await create_assignment_group(course.id, name)
+  return await create_assignment_group(cid, name)
 }
 
 async function create_or_get_course(name) {
@@ -144,7 +145,7 @@ function create_lti_assignment(cid, id, name, group_id) {
     "assignment[published]": true,
     "assignment[external_tool_tag_attributes][url]": `${config.lti_root}/lti?assignmentid=${id}`
   }
-  if (group_id) { params["assignment[group_category_id]"] = group_id }
+  if (group_id) { params["assignment[assignment_group_id]"] = group_id }
   
   return req(`/courses/${cid}/assignments`,'post',params)
 }
@@ -162,8 +163,7 @@ function read_fcc_json(filename) {
 
 async function create_fcc_assignments(coursename) {
   const course = await create_or_get_course(coursename)
-  // get existing assignments
-  const group = await create_or_get_assignment_group(course, 'FCC Challenges')
+  const group = await create_or_get_assignment_group(course.id, 'FCC Challenges')
   const assignments = await req(`/courses/${course.id}/assignments`)
   const fcc_info = read_fcc_json()
 
@@ -174,8 +174,6 @@ async function create_fcc_assignments(coursename) {
     if (lti_url) {
       var u = new nodeurl.URL(lti_url)
       var params = new nodeurl.URLSearchParams(u.search)
-      //var d = {}
-      //params.forEach( (v,k) => { d[k]=v } )
       var assignment_id = params.get('assignmentid')
       if (assignment_id) {
         existing_assignments_index[assignment_id] = assignment
@@ -214,6 +212,19 @@ async function go() {
     }
   }
 }
+
+function export_top_level_functions() {
+  const esprima = require('esprima')
+  const program = fs.readFileSync(__filename,'utf8')
+  const parsed = esprima.parseScript(program)
+  for (let fn of parsed.body) {
+    if (fn.type.endsWith('FunctionDeclaration')) {
+      module.exports[fn.id.name] = eval(fn.id.name)
+    }
+  }
+}
+
+export_top_level_functions()
 
 // go()
 // to get REPL + chrome inspector run this

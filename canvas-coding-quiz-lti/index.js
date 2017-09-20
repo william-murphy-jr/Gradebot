@@ -6,6 +6,7 @@ const ejs = require('ejs')
 const fetch = require('node-fetch')
 const fs = require('fs')
 const canvas = require('./canvas-api')
+const config = require('./config')
 
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
@@ -80,11 +81,18 @@ app.post('/lti', async (req, res) => {
   const provider = new lti.Provider( config.consumer_key,
                                      config.consumer_secret )
   console.log('lti launch params',req.body)
-  provider.valid_request(req, (err, isValid) => {
+  provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
       res.send(err + ". check your consumer key and consumer secret.")
     } else {
+
+      const assignment_id = req.body.custom_canvas_assignment_id
+      const course_id = req.body.custom_canvas_course_id
+      const user_id = req.body.custom_canvas_user_id
+      
+      const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
+      
       console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
       var assignment
@@ -95,13 +103,24 @@ app.post('/lti', async (req, res) => {
       var sessid = Math.floor(Math.random() * 1000000).toString()
       cheapsession[sessid] = {req, provider, assignment}
       const tdata = {
-        body:req.body,
-        assignment:assignment,
-        provider:provider,
-        session: sessid
+        initstate: {
+          body:req.body,
+          assignment:assignment,
+          session: sessid,
+          submitted: submitted
+        }
       }
+      if (false) { // debug
+        initstate.provider = provider
+      }
+
       ejs.renderFile('views/lti.html', tdata, null, (err,str) => {
-        res.send(str)
+        if (err) {
+          console.error(err)
+          res.send('Internal Server Error',500)
+        } else {
+          res.send(str)
+        }
       })
     }
   })
@@ -111,3 +130,6 @@ const port = 3030
 app.listen(port, function () {
   console.log(`ltitool on ${port}`)
 })
+
+// for debugging
+global.canvas = canvas
