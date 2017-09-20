@@ -14,22 +14,34 @@
     <div id="root"></div>
     <script>
 const assignment = <%- JSON.stringify(assignment) %>
+// store a session for submission
+const sessid = "<%- session %>";
     </script>
     <script type="text/babel" src="lti.js">
     </script>
     <style>
+      #root, .debug {
+      background:white;
+      }
       #editor {
       width:650px;
       height:300px;
       border: 1px solid black;
-    }
+      }
+
+      code, blockquote {
+      font-family: monospace;
+      background: hsl(220, 80%, 90%);
+      white-space: pre-wrap;
+      }
     </style>
 <!--pre id="editor">
 <%- assignment.template %>      
 </pre-->
+
+<div style="display:none" class="test-iframe"></div>
     
-    
-<pre>
+<pre style="display:none" class="debug">
 DEBUG:
 <%- JSON.stringify(provider,null,2) %>
   
