@@ -1,22 +1,24 @@
-# setting up
+## Setup
 
-Sign into canvas, under Course settings, click Apps, add Manual app.
+1. Sign into canvas with super user.
 
-Use localtunnel `lt -p 3030` to get a public URL to embed as a canvas
-LTI external tool. Make sure consumer key and consumer secret match.
+2. Navigate to /profile and get an API token. put this in `config.js` (see `config.example.js` for other settings)
 
-Good docs on the LTI launch params: https://www.edu-apps.org/code.html
+3. Under Course settings, click Apps, add Manual/LTI app. Have the URL match the `lti_root` you defined in `config.js`
 
----
+4. Clone https://github.com/freecodecamp/freecodecamp "seed" directory to use their demo assignments
 
-once configured, create a new assignment and set grading type to external tool.
+5. (optional) Use script to import free code camp assignments into your course.
 
-find tools, select gradebot. add a query parameter ?assignmentid=3
 
+## Manually creating an assignment
+
+Create a new assignment and set grading type to external tool.
+
+Find tools, select the LTI tool you created (step 3 above). add a
+query parameter `?assignmentid={ assignment id }`. Adjust the code
+that looks for the assignment to read from somewhere you like.
 
 ## Notes
 
-- Launch LTI tool with ?assignmentid parameter
-- Get assignment info from pre-cloned git repository (private)
-- NOTE: outcome URL thing only works for students! not instructor.
-- use `provider.outcome_service` to send grade back.
+- NOTE: must be a student to submit scores (teachers/admins cannot be graded on assignments)

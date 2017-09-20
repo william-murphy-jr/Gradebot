@@ -30,16 +30,11 @@ function getAssignment(id) {
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded());
 app.enable('trust proxy') // this lets req.proto == 'https'
-const consumer_key = 'consumerkey'
-const consumer_secret = 'consumersecret'
 
-const canvas_base = 'http://canvas-dev.tlmworks.org'
-// created on site admin under /profile
-const canvas_api_token = 'PDbk49hfZsQ7CzkCQ6Y9IuBmOXQSfvaTjjQFhYqLVG5Qgcpz0KXiISn2J9Z2rA9G'
 
 async function testCanvasAPI() {
-  const headers = {'Authorization':`Bearer ${canvas_api_token}`}
-  const result = await fetch(`${canvas_base}/api/v1/courses`, {headers})
+  const headers = {'Authorization':`Bearer ${config.canvas_api_token}`}
+  const result = await fetch(`${config.canvas_base}/api/v1/courses`, {headers})
   const j = await result.json()
   console.log('API /courses',j)
 }
@@ -98,8 +93,8 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
 app.post('/lti', async (req, res) => {
     /* TODO - fetch user's previous submission */
   
-  const provider = new lti.Provider( consumer_key,
-                                     consumer_secret )
+  const provider = new lti.Provider( config.consumer_key,
+                                     config.consumer_secret )
   console.log('lti launch params',req.body)
   provider.valid_request(req, (err, isValid) => {
     if (err) {
