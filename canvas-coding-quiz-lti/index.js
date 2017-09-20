@@ -4,56 +4,40 @@ const bodyParser = require('body-parser')
 const lti = require('ims-lti')
 const ejs = require('ejs')
 const fetch = require('node-fetch')
-const Remarkable = require('remarkable')
-const ropts = {typographer: true,html:true,linkify:true,linkTarget:"_blank"}
-const md = new Remarkable(ropts)
 const fs = require('fs')
+const canvas = require('./canvas-api')
 
 const cheapsession = {}
+const fcc = load_freecodecamp_challenges()
 
-const fcc_includes = [ 'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
-const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
-const fcc_index = {}
-for (let challenge of fcc_data.challenges) {
-  fcc_index[challenge.id] = challenge
+function load_freecodecamp_challenges() {
+  const fcc_includes = [ 'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
+  const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
+  const fcc_index = {}
+  for (let challenge of fcc_data.challenges) {
+    fcc_index[challenge.id] = challenge
+  }
+  return {fcc_data, fcc_index}
 }
 
-
 function getAssignment(id) {
-  if (fcc_index[id]) {
-    var challenge = fcc_index[id]
+  if (fcc.fcc_index[id]) {
+    var challenge = fcc.fcc_index[id]
     console.log('found FCC challenge',challenge)
     return challenge
   }
+  console.error(`unable to find assignment with id ${id}`)
 }
 
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded());
 app.enable('trust proxy') // this lets req.proto == 'https'
 
-
-async function testCanvasAPI() {
-  const headers = {'Authorization':`Bearer ${config.canvas_api_token}`}
-  const result = await fetch(`${config.canvas_base}/api/v1/courses`, {headers})
-  const j = await result.json()
-  console.log('API /courses',j)
-}
-
-app.get('/gitlab/:org/:repo/:page', async (req, res) => {
-  const url = `https://gitlab.tlmworks.org/${req.params.org}/${req.params.repo}/wikis/${req.params.page}.md`
-  console.log('get url',url)
-  const resp = await fetch(url)
-  const text = await resp.text()
-  const html = md.render(text)
-  res.send(html)
-})
-
 app.post('/lti-grade', bodyParser.json(), async (req, res) => {
   console.log('submit solution params',req.body)
   var sessid = req.body.session
   var data = cheapsession[sessid]
 
-  
   if (data) {
     console.log('found session',data)
     var origbody = data.req.body
@@ -122,6 +106,7 @@ app.post('/lti', async (req, res) => {
     }
   })
 })
+
 const port = 3030
 app.listen(port, function () {
   console.log(`ltitool on ${port}`)
