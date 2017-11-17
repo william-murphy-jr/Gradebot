@@ -116,6 +116,16 @@ function create_assignment_group(cid, name) {
   return req(`/courses/${cid}/assignment_groups`,'post',params)
 }
 
+async function delete_courses(name) {
+  var courses = await req('/accounts/1/courses')
+  for (var course of courses) {
+    if (course.name == name) {
+      console.log('delete course',course.id)
+      await req(`/courses/${course.id}`,'delete',{'event':'delete'})
+    }
+  }
+}
+
 async function delete_assignments(cid, group_name) {
   const assignments = await req(`/courses/${cid}/assignments`)
   const a_groups = await req(`/courses/${cid}/assignment_groups`)
@@ -163,7 +173,7 @@ function read_fcc_json(filename) {
 
 async function create_fcc_assignments(coursename) {
   const course = await create_or_get_course(coursename)
-  const group = await create_or_get_assignment_group(course.id, 'FCC Challenges')
+  const group = await create_or_get_assignment_group(course.id, 'Javascript Challenges')
   const assignments = await req(`/courses/${course.id}/assignments`)
   const fcc_info = read_fcc_json()
 
