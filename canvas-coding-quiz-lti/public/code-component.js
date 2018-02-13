@@ -139,9 +139,16 @@ class CodeComponent extends React.Component {
 
       
     }
-    
+
+    let btnStyles = {
+      "background": "rgb(28, 184, 65)",
+      "color": "white",
+      "borderRadius": "4px",
+      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.2)"
+    }
+ 
     return  (
-        <div>
+        <div style={{"textAlign": "center"}}>
         <h1>Code assignment</h1>
         <h3>{assignment.title}</h3>
         <div dangerouslySetInnerHTML={{__html:assignment.description}}></div>
@@ -150,7 +157,7 @@ class CodeComponent extends React.Component {
       </pre>
         <span dangerouslySetInnerHTML={{__html:msg}}></span>
 <br />
-        <input type="button" defaultValue="Check Code"
+        <input style={btnSytles}type="button" defaultValue="Check Code"
       onClick={this.onCheck.bind(this)} />
         <input type="button" defaultValue="Reset Solution"
       onClick={this.onReset.bind(this)} />
