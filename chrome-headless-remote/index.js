@@ -7,7 +7,6 @@ const chromeLauncher = require('chrome-launcher')
 // log.setLevel('info');
 
 const selfLaunch = true
-
 function launchChrome(headless=true) {
   return chromeLauncher.launch({
     port: 9222,
@@ -56,10 +55,15 @@ async function runTest(code,tests,debugLevel) {
 
 app.use(express.static('public'))
 app.use(bodyParser.json());
+
 app.get('/', function (req, res) {
+  console.log("in")
   res.send('Hello World!')
 })
 
+app.get('/hello', (req, res) => {
+  console.log("hello")
+})
 app.post('/api/grade', async (req, res) => {
   const code = req.body['code']
   const tests = req.body['tests']

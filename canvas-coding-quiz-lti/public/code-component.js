@@ -64,6 +64,10 @@ async function submit_code_server(user_code, test_user_code) {
   return j
 }
 
+let btn = {
+  
+}
+
 class CodeComponent extends React.Component {
   async onSubmit() {
     console.log('submit code to grader')
@@ -139,40 +143,38 @@ class CodeComponent extends React.Component {
 
       
     }
-
-    let btnStyles = {
-      "background": "rgb(28, 184, 65)",
-      "color": "white",
-      "borderRadius": "4px",
-      "textShadow": "0 1px 1px rgba(0, 0, 0, 0.2)"
-    }
- 
     return  (
-        <div style={{"textAlign": "center"}}>
-        <h1>Code assignment</h1>
-        <h3>{assignment.title}</h3>
-        <div dangerouslySetInnerHTML={{__html:assignment.description}}></div>
+      <div>
+        <header id={"code-header"}>
+          <h1>Code assignment</h1>
+          <h1>
+          </h1>
+          <h3>{assignment.title}</h3>
+        </header>
+        <div id={"description"}>
+          {assignment.description.map((description, i) => {
+            return <p key={i} dangerouslySetInnerHTML={{__html:description}}></p>
+          })}
+        </div>
         <pre id="editor">
-        
-      </pre>
+        </pre>
         <span dangerouslySetInnerHTML={{__html:msg}}></span>
-<br />
-        <input style={btnSytles}type="button" defaultValue="Check Code"
-      onClick={this.onCheck.bind(this)} />
-        <input type="button" defaultValue="Reset Solution"
-      onClick={this.onReset.bind(this)} />
-
-      { submit }
+        <br />
+        <div className={"submit-btns"} >
+          <input className={"btn"} type="button" defaultValue="Check Code"
+          onClick={this.onCheck.bind(this)} />
+          <input className={"btn reset"} type="button" defaultValue="Reset Solution"
+          onClick={this.onReset.bind(this)} />
+          { submit }
+        </div>
         <pre style={{display:'none'}}>
-        {JSON.stringify(this.state,null,2)}
-      </pre>
-        </div>);
-  }
+          {JSON.stringify(this.state,null,2)}
+        </pre>
+      </div>)
+    }
 }
-
 
 ReactDOM.render(
     <CodeComponent />,
   document.getElementById('root')
 );
-

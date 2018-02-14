@@ -3,45 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <title>LTI Tool Thingie</title>
-    <!--script src="https://unpkg.com/react@latest/dist/react.js"></script>
-    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script-->
     <script src="third-party/react.js"></script>
     <script src="third-party/react-dom.js"></script>
     <script src="third-party/babel.min.js"></script>
-
     <script src="third-party/ace.js"></script>
     <script src="third-party/mode-javascript.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
   </head>
   <body>
     <div id="root"></div>
     <script>
-const initstate = <%- JSON.stringify(initstate) %>
-const assignment = initstate.assignment
-const sessid = initstate.session
+      const initstate = <%- JSON.stringify(initstate) %>
+      const assignment = initstate.assignment
+      const sessid = initstate.session
     </script>
     <script type="text/babel" src="code-component.js">
     </script>
-    <style>
-      #root, .debug {
-      background:white;
-      }
-      #editor {
-      width:650px;
-      height:300px;
-      border: 1px solid black;
-      }
-
-      code, blockquote {
-      font-family: monospace;
-      background: hsl(220, 80%, 90%);
-      white-space: pre-wrap;
-      }
-    </style>
-
-<div style="display:none" class="test-iframe"></div>
-    
-
+    <div style="display:none" class="test-iframe"></div>
   </body>
 </html>
 
