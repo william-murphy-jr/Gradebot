@@ -118,7 +118,7 @@ class CodeComponent extends React.Component {
   }
   render() {
     var msg = ''
-    var submit = ''
+    var submit = false;
 
     if (this.state) {
       if (this.state.completed) {
@@ -136,13 +136,20 @@ class CodeComponent extends React.Component {
       if (this.state.checked && this.state.checked.result) {
         if (this.state.checked.result.message) msg = this.state.checked.result.message
         if (this.state.checked.result.passed) {
-          submit = (<input type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />)
+          submit = true;
           msg = 'Great! Your code passed all tests.'
         }
-      }
-
-      
+      }  
     }
+
+    let button = null;
+    if (!submit) {
+      button = [<input className={"btn"} type="button" defaultValue="Check Code" onClick={this.onCheck.bind(this)} />,
+      <input className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset.bind(this)} />]
+    } else {
+      button = <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />
+    }
+
     return  (
       <div>
         <header id={"code-header"}>
@@ -158,14 +165,10 @@ class CodeComponent extends React.Component {
         </div>
         <pre id="editor">
         </pre>
-        <span dangerouslySetInnerHTML={{__html:msg}}></span>
+        <p className={"msg"} dangerouslySetInnerHTML={{__html:msg}}></p>
         <br />
         <div className={"submit-btns"} >
-          <input className={"btn"} type="button" defaultValue="Check Code"
-          onClick={this.onCheck.bind(this)} />
-          <input className={"btn reset"} type="button" defaultValue="Reset Solution"
-          onClick={this.onReset.bind(this)} />
-          { submit }
+          {button}
         </div>
         <pre style={{display:'none'}}>
           {JSON.stringify(this.state,null,2)}
