@@ -7,6 +7,7 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const canvas = require('./canvas-api')
 const config = require('./config')
+const path = require('path')
 
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
@@ -30,9 +31,17 @@ function getAssignment(id) {
   console.error(`unable to find assignment with id ${id}`)
 }
 
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(bodyParser.urlencoded());
 app.enable('trust proxy') // this lets req.proto == 'https'
+
+app.get('/api', (req, res) => {
+  res.json({message: "api root."})
+})
+
+app.get('/', async (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+})
 
 app.post('/lti-grade', bodyParser.json(), async (req, res) => {
   console.log('submit solution params',req.body)
@@ -76,12 +85,17 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
   }
 })
 
+app.get('/lti', async (req, res) => {
+  res.send(app.locals.tdata)
+  console.log("this is the loclas-----------", app.locals,"-------------------")
+})
+
 app.post('/lti', async (req, res) => {
     /* TODO - fetch user's previous submission */
   
-  const provider = new lti.Provider( config.consumer_key,
-                                     config.consumer_secret )
-  console.log('lti launch params',req.body)
+  const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
+  // console.log('lti launch params',req.body)
+  console.log("req.body.custom_canvas_course_id~~~~~~~~~~~",req.body.custom_canvas_course_id,"~~~~~~~~~~~~~~~~~~~~~~")
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
@@ -90,7 +104,7 @@ app.post('/lti', async (req, res) => {
 
       const assignment_id = req.body.custom_canvas_assignment_id
       const course_id = req.body.custom_canvas_course_id
-      const user_id = req.body.custom_canvas_user_id
+      const user_id = req.body.user_id
       
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
@@ -117,17 +131,25 @@ app.post('/lti', async (req, res) => {
         initstate.provider = provider
       }
 
-      ejs.renderFile('views/lti.html', tdata, null, (err,str) => {
-        if (err) {
-          console.error(err)
-          res.send('Internal Server Error',500)
-        } else {
-          res.send(str)
-        }
-      })
+      app.locals.tdata = tdata
+      console.log("-----------tdata", tdata, "---------------------")
+
+      res.sendFile(path.join(__dirname, 'build', 'index.html'));
+
+      // ejs.renderFile('views/lti.ejs', tdata, null, (err,str) => {
+      //   if (err) {
+      //     console.error(err)
+      //     res.send('Internal Server Error',500)
+      //   } else {
+      //     console.log("this is the str", str)
+      //     res.send(str)
+      //   }
+      // })
     }
   })
 })
+
+
 
 const port = 3030
 app.listen(port, function () {
