@@ -14,6 +14,7 @@
     "nodemon": "^1.11.0",
     "react": "^15.5.4",
     "react-ace": "^5.9.0",
+    "react-ace-editor": "0.0.2",
     "react-dom": "^15.5.4",
     "react-router-dom": "^4.1.1",
     "serve-favicon": "^2.4.3"

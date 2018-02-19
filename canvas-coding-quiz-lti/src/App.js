@@ -1,8 +1,7 @@
 import './App.css';
-// import 'brace/mode/java';
 
+import Assignment from './components/Assignment/Assignment'
 import React, { Component } from 'react';
-
 import AceEditor from 'react-ace';
 import axios from 'axios'
 
@@ -12,14 +11,20 @@ import 'brace/theme/monokai';
 class App extends Component {
 
   state = {
-    assignment: []
+    assignment: [],
+    description: [],
+    challengeSeed: []
   }
 
   componentDidMount() {
     axios.get('/lti')
       .then(res => {
         const assignment = res.data.initstate.assignment;
-        this.setState({ assignment });
+        const challengeSeed = res.data.initstate.assignment.challengeSeed
+        const description = res.data.initstate.assignment.description
+        this.setState({ assignment, 
+          description, 
+          challengeSeed });
       })
   }
 
@@ -33,9 +38,10 @@ class App extends Component {
           <h3>{this.state.assignment.title}</h3>
         </header>
         <div id={"description"}>
-          {this.state.assignment.description && this.state.assignment.description.map((description, i) => {
-            return <p key={i} dangerouslySetInnerHTML={{__html:description}}></p>
+          {this.state.description.map((description, i) => {
+            return <Assignment description={description} key={i}/>
           })}
+          
         </div>
         {/* <pre id="editor">
         </pre> */}
@@ -44,9 +50,11 @@ class App extends Component {
         <div className={"submit-btns"} >
           <button>hit</button>
         </div>
-        <AceEditor id="editor"
+        <AceEditor name="editor"
           mode="javascript"
           theme="monokai"
+          value={this.state.challengeSeed.join("\n")}
+          cursorStart={2}
         />
         {/* <pre style={{display:'none'}}>
           {JSON.stringify(this.state,null,2)}
