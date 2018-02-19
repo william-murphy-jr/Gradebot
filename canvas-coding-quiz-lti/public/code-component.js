@@ -112,8 +112,10 @@ class CodeComponent extends React.Component {
     this.resetSolution()
     //editor.setTheme("ace/theme/twilight");
     editor.session.setMode("ace/mode/javascript");
+    console.log(ace, "DFSDGFSDFGSDFGSDFGSDFGdf")
   }
   render() {
+    console.log("hello",assignment.challengeSeed)
     var msg = ''
     var submit = false;
 
@@ -151,8 +153,7 @@ class CodeComponent extends React.Component {
       <div>
         <header id={"code-header"}>
           <h1>Code assignment</h1>
-          <h1>
-          </h1>
+          <h1>hi</h1>
           <h3>{assignment.title}</h3>
         </header>
         <div id={"description"}>

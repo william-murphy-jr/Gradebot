@@ -1,8 +1,13 @@
 import './App.css';
+// import 'brace/mode/java';
 
 import React, { Component } from 'react';
 
+import AceEditor from 'react-ace';
 import axios from 'axios'
+
+import 'brace/mode/javascript';
+import 'brace/theme/monokai';
 
 class App extends Component {
 
@@ -39,6 +44,10 @@ class App extends Component {
         <div className={"submit-btns"} >
           <button>hit</button>
         </div>
+        <AceEditor id="editor"
+          mode="javascript"
+          theme="monokai"
+        />
         {/* <pre style={{display:'none'}}>
           {JSON.stringify(this.state,null,2)}
         </pre> */}

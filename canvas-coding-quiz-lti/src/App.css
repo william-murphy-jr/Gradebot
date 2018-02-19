@@ -26,3 +26,20 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+#root, .debug {
+  background:white;
+}
+
+#brace-editor {
+  width:650px;
+  height:300px;
+  border: 1px solid black;
+  margin: 30px auto;
+}
+
+code, blockquote {
+  font-family: monospace;
+  background: hsl(220, 80%, 90%);
+  white-space: pre-wrap;
+}
