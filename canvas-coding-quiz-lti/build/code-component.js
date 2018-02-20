@@ -83,6 +83,7 @@ class CodeComponent extends React.Component {
     console.log('submit/check',this)
     this.setState({submitting:true})
     const user_code = this._editor.getValue()
+    console.log(user_code)
     const test_user_code = assignment.tests
     const sub_result = await submit_code(user_code, assignment)
     this.setState({submitting:false, checked:sub_result})
@@ -112,10 +113,8 @@ class CodeComponent extends React.Component {
     this.resetSolution()
     //editor.setTheme("ace/theme/twilight");
     editor.session.setMode("ace/mode/javascript");
-    console.log(ace, "DFSDGFSDFGSDFGSDFGSDFGdf")
   }
   render() {
-    console.log("hello",assignment.challengeSeed)
     var msg = ''
     var submit = false;
 

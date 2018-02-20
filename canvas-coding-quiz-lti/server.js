@@ -87,7 +87,6 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
 
 app.get('/lti', async (req, res) => {
   res.send(app.locals.tdata)
-  console.log("this is the loclas-----------", app.locals,"-------------------")
 })
 
 app.post('/lti', async (req, res) => {
@@ -95,7 +94,6 @@ app.post('/lti', async (req, res) => {
   
   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
   // console.log('lti launch params',req.body)
-  console.log("req.body.custom_canvas_course_id~~~~~~~~~~~",req.body.custom_canvas_course_id,"~~~~~~~~~~~~~~~~~~~~~~")
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
@@ -130,10 +128,8 @@ app.post('/lti', async (req, res) => {
       if (false) { // debug
         initstate.provider = provider
       }
-
+      // console.log(tdata.initstate.assignment.solution)
       app.locals.tdata = tdata
-      console.log("-----------tdata", tdata, "---------------------")
-
       res.sendFile(path.join(__dirname, 'build', 'index.html'));
 
       // ejs.renderFile('views/lti.ejs', tdata, null, (err,str) => {
