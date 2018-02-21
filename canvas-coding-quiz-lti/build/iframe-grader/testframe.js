@@ -50,5 +50,10 @@ function runTest(text, challenge) {
       return e
     }
   }
-  return {passed:true}
+  return true
+}
+
+
+module.exports = {
+  runTest
 }
