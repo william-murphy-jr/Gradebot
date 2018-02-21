@@ -15,7 +15,9 @@ class App extends Component {
   state = {
     assignment: [],
     description: [],
-    challengeSeed: []
+    challengeSeed: [],
+    errorMsg: "",
+    passed: false
   }
 
   componentDidMount() {
@@ -34,21 +36,39 @@ class App extends Component {
 
   onReset = () => {
     this.setState(prevState => ({
-      description: prevState.description
+      description: prevState.description,
+      errorMsg: ""
     }));
   }
 
-  onSubmit = () => {
+  onCheck = () => {
+    let passed = true
     const code = this.ace.editor.getValue()
+    let errorMsg;
     this.state.assignment.tests.forEach((test) => {
-      eval(test)
+      try {
+        eval(test)
+      } catch(e) {
+        errorMsg = e.message.replace('message:', '')
+        passed = false
+      }
     })
-
-    return console.log('i never get here if theres an error')
+    this.setState({
+      errorMsg,
+      passed,
+      challengeSeed:[code]
+    })
 
   }
 
   render() {
+    let button = null;
+    if (!this.state.passed) {
+      button = [<input className={"btn"} type="button" defaultValue="Check Code" onClick={this.onCheck} />,
+      <input className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
+    } else {
+      button = <input className={"btn"} type="button" defaultValue="Submit Solution" />
+    }
     return (
       <div>
         <header id={"code-header"}>
@@ -60,22 +80,17 @@ class App extends Component {
             return <AssignmentDescription description={description} key={i}/>
           })}   
         </div>
-        {/* <p className={"msg"} dangerouslySetInnerHTML={{__html:msg}}></p> */}
         <AceEditor name="editor"
           mode="javascript"
           theme="monokai"
           value={this.state.challengeSeed.join("\n")}
           height={250}
-          blockScrolling="Infinity"
           ref={instance => { this.ace = instance; }}
         />
+        <p className={"msg"} dangerouslySetInnerHTML={{ __html: this.state.errorMsg }}></p>
         <div className={"submit-btns"}>
-          <input className={"btn"} type="button" defaultValue="Check Code"  onClick={this.onSubmit}/>
-          <input className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset}/>
+          {button}
         </div>
-        {/* <pre style={{display:'none'}}>
-          {JSON.stringify(this.state,null,2)}
-        </pre> */}
       </div>
     )
   }
