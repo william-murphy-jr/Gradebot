@@ -1,6 +1,6 @@
 import './App.css';
 
-import ChallengeInstruction from './components/ChallengeInstruction/ChallengeInstruction'
+import ChallengeDescription from './components/ChallengeDescription/ChallengeDescription'
 import TestSuite from './components/TestSuite/TestSuite'
 import React, { Component } from 'react';
 import { assert } from 'chai';
@@ -77,20 +77,26 @@ class App extends Component {
       "// Only change code below this line",
       ""
     ],
-    errorMsg: "",
     passed: false
   }
+
+  //ONLY FOR TESTING TAKE OUT!!!!
+  componentWillMount() {
+    this.instructions = this.state.description.splice(this.state.assignment.description.indexOf("<hr>") + 1)
+  }
+  ////////////////////////////////
 
   componentDidMount() {
     this._editor = this.ace.editor
     this._editor.$blockScrolling = Infinity;
     axios.get('/lti')
       .then(res => {
+        const assignment = res.data.assignment
         this.challengeSeed = res.data.initstate.assignment.challengeSeed
         this.setState({
-          assignment: res.data.initstate.assignment,
-          description: res.data.initstate.assignment.description,
-          challengeSeed: this.challengeSeed 
+          assignment,
+          description: assignment.description,
+          challengeSeed: this.challengeSeed
         });
       })
   }
@@ -105,7 +111,6 @@ class App extends Component {
   onCheck = () => {
     var code = this._editor.getValue()
     let passed = true
-    let errorMsg;
     let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
     let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
     this.state.assignment.tests.forEach((test) => {
@@ -113,44 +118,51 @@ class App extends Component {
         let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
         eval(codeAndTest)
       } catch(e) {
-        errorMsg = e.message.replace('message:', '')
         passed = false
       }
     })
     this.setState({
-      errorMsg,
       passed,
       challengeSeed:[code]
     })
   }
 
   render() {
-    const { passed, assignment, description, challengeSeed, errorMsg } = this.state
+    const { passed, assignment, description, challengeSeed, errorMsg, instructions } = this.state
     const tests = this.state.assignment.tests.map( t => t.split("'message:"))
+    const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
     return (
       <div>
-        <header id={"code-header"}>
-          <h1>Code assignment</h1>
-          <h3>{assignment.title}</h3>
+        <header id="App-header">
+          <h4>{assignment.title}</h4>
+          <hr/>
         </header>
-        <div className={"challenge-instructions"}>
-          {description.map((description, i) => {
-            return <ChallengeInstruction description={description} key={i}/>
+        <div className={"challenge-description"}>
+          {this.state.description.map((description, index) => {
+            return <ChallengeDescription description={description} index={index}/>
           })}   
         </div>
+        <div className="challenge-instructions-tests">
+          <div className="challenge-instuctions">
+            <h3>Instructions</h3>
+            {this.instructions.map((line, index) => <p key={index} dangerouslySetInnerHTML={{ __html: line }}></p>)}
+          </div>
+          <div className="challenge-tests">
+            <h3>Tests</h3>
+            <TestSuite tests={tests}/>
+          </div>
+        </div>
+        <hr />
         <AceEditor name="editor"
+          className="bigitem"
           mode="javascript"
           theme="monokai"
           value={challengeSeed.join("\n")}
           height={250}
           ref={instance => { this.ace = instance; }}
-          $blockScrolling={1}
         />
-        <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p>
-        <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
-          <div>
-          <TestSuite tests={tests}/>
-          </div>
+          {/* <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p> */}
+          <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
         <div className={"submit-btns"}>
           <input className={"btn"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Check Code" onClick={this.onCheck} />
           <input className={"btn reset"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Reset Solution" onClick={this.onReset} />

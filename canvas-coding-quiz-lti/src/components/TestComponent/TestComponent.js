@@ -1,8 +1,9 @@
 import React from 'react';
 
 const TestComponent  = (props) => {
+  const { test, key} = props
   return (
-    <p dangerouslySetInnerHTML={{ __html: props.test }}></p>
+    <p key={key} dangerouslySetInnerHTML={{ __html: test }}></p>
   )
 }
 

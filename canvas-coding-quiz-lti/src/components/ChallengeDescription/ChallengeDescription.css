@@ -1,0 +1,17 @@
+.challenge-description blockquote {
+  font-size: 90%;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  color: #c7254e;
+  background-color: #fffbe5;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  white-space: pre;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  margin-top: -5px;
+  overflow: auto;
+}
+
+.challenge-description hr {
+  margin-bottom: 25px;
+}
