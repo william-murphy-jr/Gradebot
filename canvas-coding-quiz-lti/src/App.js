@@ -1,6 +1,7 @@
 import './App.css';
 
-import AssignmentDescription from './components/AssignmentDescription/AssignmentDescription'
+import ChallengeInstruction from './components/ChallengeInstruction/ChallengeInstruction'
+import TestSuite from './components/TestSuite/TestSuite'
 import React, { Component } from 'react';
 import { assert } from 'chai';
 import AceEditor from 'react-ace';
@@ -14,94 +15,68 @@ class App extends Component {
 
   state = {
     assignment:  {
-      "id": "56533eb9ac21ba0edf2244d8",
-      "title": "Comparisons with the Logical And Operator",
+      "id": "56533eb9ac21ba0edf2244a8",
+      "title": "Storing Values with the Assignment Operator",
       "description": [
-        "Sometimes you will need to test more than one thing at a time. The <dfn>logical and</dfn> operator (<code>&&</code>) returns <code>true</code> if and only if the <dfn>operands</dfn> to the left and right of it are true.",
-        "The same effect could be achieved by nesting an if statement inside another if:",
-        "<blockquote>if (num > 5) {<br>  if (num < 10) {<br>    return \"Yes\";<br>  }<br>}<br>return \"No\";</blockquote>",
-        "will only return \"Yes\" if <code>num</code> is greater than <code>5</code> and less than <code>10</code>. The same logic can be written as:",
-        "<blockquote>if (num > 5 && num < 10) {<br>  return \"Yes\";<br>}<br>return \"No\";</blockquote>",
+        "In JavaScript, you can store a value in a variable with the <dfn>assignment</dfn> operator.",
+        "<code>myVariable = 5;</code>",
+        "This assigns the <code>Number</code> value <code>5</code> to <code>myVariable</code>.",
+        "Assignment always goes from right to left. Everything to the right of the <code>=</code> operator is resolved before the value is assigned to the variable to the left of the operator.",
+        "<blockquote>myVar = 5;<br>myNum = myVar;</blockquote>",
+        "This assigns <code>5</code> to <code>myVar</code> and then resolves <code>myVar</code> to <code>5</code>  again and assigns it to <code>myNum</code>.",
         "<hr>",
-        "Combine the two if statements into one statement which will return <code>\"Yes\"</code> if <code>val</code> is less than or equal to <code>50</code> and greater than or equal to <code>25</code>. Otherwise, will return <code>\"No\"</code>."
+        "Assign the value <code>7</code> to variable <code>a</code>.",
+        "Assign the contents of <code>a</code> to variable <code>b</code>."
       ],
       "releasedOn": "January 1, 2016",
-      "challengeSeed": [
-        "function testLogicalAnd(val) {",
-        "  // Only change code below this line",
-        "",
-        "  if (val) {",
-        "    if (val) {",
-        "      return \"Yes\";",
-        "    }",
-        "  }",
-        "",
-        "  // Only change code above this line",
-        "  return \"No\";",
+      "head": [
+        "if (typeof a != 'undefined') {",
+        "  a = undefined;",
         "}",
+        "if (typeof b != 'undefined') {",
+        "  b = undefined;",
+        "}"
+      ],
+      "challengeSeed": [
+        "// Setup",
+        "var a;",
+        "var b = 2;",
         "",
-        "// Change this value to test",
-        "testLogicalAnd(10);"
+        "// Only change code below this line",
+        ""
+      ],
+      "tail": [
+        "(function(a,b){return \"a = \" + a + \", b = \" + b;})(a,b);"
       ],
       "solutions": [
-        "function testLogicalAnd(val) {\n  if (val >= 25 && val <= 50) {\n    return \"Yes\";\n  }\n  return \"No\";\n}"
+        "var a;\nvar b = 2;\na = 7;\nb = a;"
       ],
       "tests": [
-        "assert(code.match(/&&/g).length === 1, 'message: You should use the <code>&&</code> operator once');",
-        "assert(code.match(/if/g).length === 1, 'message: You should only have one <code>if</code> statement');",
-        "assert(testLogicalAnd(0) === \"No\", 'message: <code>testLogicalAnd(0)</code> should return \"No\"');",
-        "assert(testLogicalAnd(24) === \"No\", 'message: <code>testLogicalAnd(24)</code> should return \"No\"');",
-        "assert(testLogicalAnd(25) === \"Yes\", 'message: <code>testLogicalAnd(25)</code> should return \"Yes\"');",
-        "assert(testLogicalAnd(30) === \"Yes\", 'message: <code>testLogicalAnd(30)</code> should return \"Yes\"');",
-        "assert(testLogicalAnd(50) === \"Yes\", 'message: <code>testLogicalAnd(50)</code> should return \"Yes\"');",
-        "assert(testLogicalAnd(51) === \"No\", 'message: <code>testLogicalAnd(51)</code> should return \"No\"');",
-        "assert(testLogicalAnd(75) === \"No\", 'message: <code>testLogicalAnd(75)</code> should return \"No\"');",
-        "assert(testLogicalAnd(80) === \"No\", 'message: <code>testLogicalAnd(80)</code> should return \"No\"');"
+        "assert(/var a;/.test(code) && /var b = 2;/.test(code), 'message: Do not change code above the line');",
+        "assert(typeof a === 'number' && a === 7, 'message: <code>a</code> should have a value of 7');",
+        "assert(typeof b === 'number' && b === 7, 'message: <code>b</code> should have a value of 7');",
+        "assert(/b\\s*=\\s*a\\s*;/g.test(code), 'message: <code>a</code> should be assigned to <code>b</code> with <code>=</code>');"
       ],
-      "type": "waypoint",
-      "challengeType": 1,
-      "translations": {
-        "es": {
-          "title": "La comparación con el operador lógico y",
-          "description": [
-            "A veces necesitarás probar más de una cosa a la vez. El operador <dfn>lógico y</dfn> (<code>&&</code>) retorna <code>true</code>(verdadero) si y solo si los <dfn>operandos</dfn> a la izquierda y derecha de este son verdaderos.",
-            "El mismo efecto podría lograrse anidando una sentencia if dentro de otro if:",
-            "<blockquote>if (num > 5) {<br>  if (num < 10) {<br>    return \"Yes\";<br>  }<br>}<br>return \"No\";</blockquote>",
-            "solo retornará \"Yes\" si <code>num</code> está entre <code>6</code> y <code>9</code> (6 y 9 incluidos). La misma lógica puede ser escrita como:",
-            "<blockquote>if (num > 5 && num < 10) {<br>  return \"Yes\";<br>}<br>return \"No\";</blockquote>",
-            "<h4>Instrucciones</h4>",
-            "Combina las dos sentencias if dentro de una sentencia la cual retornará <code>\"Yes\"</code> si <code>val</code> es menor o igual a <code>50</code> y mayor o igual a <code>25</code>. De otra manera, retornará <code>\"No\"</code>."
-          ]
-        }
-      }
     },
-      
     description: [
-      "Sometimes you will need to test more than one thing at a time. The <dfn>logical and</dfn> operator (<code>&&</code>) returns <code>true</code> if and only if the <dfn>operands</dfn> to the left and right of it are true.",
-      "The same effect could be achieved by nesting an if statement inside another if:",
-      "<blockquote>if (num > 5) {<br>  if (num < 10) {<br>    return \"Yes\";<br>  }<br>}<br>return \"No\";</blockquote>",
-      "will only return \"Yes\" if <code>num</code> is greater than <code>5</code> and less than <code>10</code>. The same logic can be written as:",
-      "<blockquote>if (num > 5 && num < 10) {<br>  return \"Yes\";<br>}<br>return \"No\";</blockquote>",
+      "In JavaScript, you can store a value in a variable with the <dfn>assignment</dfn> operator.",
+      "<code>myVariable = 5;</code>",
+      "This assigns the <code>Number</code> value <code>5</code> to <code>myVariable</code>.",
+      "Assignment always goes from right to left. Everything to the right of the <code>=</code> operator is resolved before the value is assigned to the variable to the left of the operator.",
+      "<blockquote>myVar = 5;<br>myNum = myVar;</blockquote>",
+      "This assigns <code>5</code> to <code>myVar</code> and then resolves <code>myVar</code> to <code>5</code>  again and assigns it to <code>myNum</code>.",
       "<hr>",
-      "Combine the two if statements into one statement which will return <code>\"Yes\"</code> if <code>val</code> is less than or equal to <code>50</code> and greater than or equal to <code>25</code>. Otherwise, will return <code>\"No\"</code>."
+      "Assign the value <code>7</code> to variable <code>a</code>.",
+      "Assign the contents of <code>a</code> to variable <code>b</code>."
     ],
-    challengeSeed: [
-      "function testLogicalAnd(val) {",
-      "  // Only change code below this line",
+    challengeSeed:[
+      "// Setup",
+      "var a;",
+      "var b = 2;",
       "",
-      "  if (val) {",
-      "    if (val) {",
-      "      return \"Yes\";",
-      "    }",
-      "  }",
-      "",
-      "  // Only change code above this line",
-      "  return \"No\";",
-      "}",
-      "",
-      "// Change this value to test",
-      "testLogicalAnd(10);"
-    ], 
+      "// Only change code below this line",
+      ""
+    ],
     errorMsg: "",
     passed: false
   }
@@ -151,16 +126,16 @@ class App extends Component {
 
   render() {
     const { passed, assignment, description, challengeSeed, errorMsg } = this.state
-
+    const tests = this.state.assignment.tests.map( t => t.split("'message:"))
     return (
       <div>
         <header id={"code-header"}>
           <h1>Code assignment</h1>
           <h3>{assignment.title}</h3>
         </header>
-        <div id={"description"}>
+        <div className={"challenge-instructions"}>
           {description.map((description, i) => {
-            return <AssignmentDescription description={description} key={i}/>
+            return <ChallengeInstruction description={description} key={i}/>
           })}   
         </div>
         <AceEditor name="editor"
@@ -173,6 +148,9 @@ class App extends Component {
         />
         <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p>
         <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
+          <div>
+          <TestSuite tests={tests}/>
+          </div>
         <div className={"submit-btns"}>
           <input className={"btn"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Check Code" onClick={this.onCheck} />
           <input className={"btn reset"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Reset Solution" onClick={this.onReset} />

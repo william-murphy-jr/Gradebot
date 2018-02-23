@@ -35,10 +35,6 @@ app.use(express.static(path.join(__dirname, 'build')));
 app.use(bodyParser.urlencoded());
 app.enable('trust proxy') // this lets req.proto == 'https'
 
-app.get('/api', (req, res) => {
-  res.json({message: "api root."})
-})
-
 app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 })
@@ -95,6 +91,7 @@ app.post('/lti', async (req, res) => {
   
   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
   // console.log('lti launch params',req.body)
+  console.log(provider)
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
@@ -155,3 +152,4 @@ app.listen(port, function () {
 
 // for debugging
 global.canvas = canvas
+
