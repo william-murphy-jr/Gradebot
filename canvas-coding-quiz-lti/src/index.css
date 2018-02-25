@@ -155,3 +155,33 @@ hr{
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 } */
+
+/* "if (typeof a != 'undefined') {
+  a = undefined;
+}
+if (typeof b != 'undefined') {
+  b = undefined;
+} 
+ // Setup
+var a;
+var b = 2;
+
+// Only change code below this line
+ 
+ (function(a,b){return "a = " + a + ", b = " + b;})(a,b); 
+ assert(/var a;/.test(code) && /var b = 2;/.test(code),  Do not change code above the line'); " */
+
+ /* "if (typeof a != 'undefined') {
+  a = undefined;
+}
+if (typeof b != 'undefined') {
+  b = undefined;
+} 
+ // Setup
+var a;
+var b = 2;
+
+// Only change code below this line
+ 
+ (function(a,b){return "a = " + a + ", b = " + b;})(a,b); 
+ assert(/var a;/.test(code) && /var b = 2;/.test(code), 'message: Do not change code above the line'); " */

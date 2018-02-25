@@ -127,9 +127,25 @@ class App extends Component {
     })
   }
 
+  runTest = (test) => {
+    if (!this._editor) return
+    var code = this._editor.getValue()
+    let passed = true
+    let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
+    let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
+    try {
+      let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
+      eval(codeAndTest)
+    } catch(e) {
+      console.log(e)
+      passed = false
+    }
+    return passed
+  }
+
   render() {
     const { passed, assignment, description, challengeSeed, errorMsg, instructions } = this.state
-    const tests = this.state.assignment.tests.map( t => t.split("'message:"))
+    // const tests = this.state.assignment.tests.map( t => t.split("'message:"))
     const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
     return (
       <div>
@@ -149,7 +165,7 @@ class App extends Component {
           </div>
           <div className="challenge-tests">
             <h3>Tests</h3>
-            <TestSuite tests={tests}/>
+            <TestSuite tests={assignment.tests} runTest={this.runTest}/>
           </div>
         </div>
         <hr />
@@ -160,6 +176,7 @@ class App extends Component {
           value={challengeSeed.join("\n")}
           height={250}
           ref={instance => { this.ace = instance; }}
+          asi={false}
         />
           {/* <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p> */}
           <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
