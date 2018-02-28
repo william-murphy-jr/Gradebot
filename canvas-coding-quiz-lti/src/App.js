@@ -6,10 +6,16 @@ import React, { Component } from 'react';
 import { assert } from 'chai';
 import AceEditor from 'react-ace';
 import axios from 'axios'
-window.assert = assert
+// window.assert = assert
 
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
+
+const testCode = (data) => { 
+  // console.log(data)
+  return axios.post('/check-answer', data);
+}
+
 
 class App extends Component {
 
@@ -89,16 +95,16 @@ class App extends Component {
   componentDidMount() {
     this._editor = this.ace.editor
     this._editor.$blockScrolling = Infinity;
-    axios.get('/lti')
-      .then(res => {
-        const assignment = res.data.assignment
-        this.challengeSeed = res.data.initstate.assignment.challengeSeed
-        this.setState({
-          assignment,
-          description: assignment.description,
-          challengeSeed: this.challengeSeed
-        });
-      })
+    // axios.get('/lti')
+    //   .then(res => {
+    //     const assignment = res.data.assignment
+    //     this.challengeSeed = res.data.initstate.assignment.challengeSeed
+    //     this.setState({
+    //       assignment,
+    //       description: assignment.description,
+    //       challengeSeed: this.challengeSeed
+    //     });
+    //   })
   }
 
   onReset = () => {
@@ -113,40 +119,54 @@ class App extends Component {
     let passed = true
     let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
     let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
-    this.state.assignment.tests.forEach((test) => {
-      try {
-        let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
-        eval(codeAndTest)
-      } catch(e) {
-        passed = false
-      }
-    })
+    // this.state.assignment.tests.forEach((test) => {
+    //     let data = {
+    //       code,
+    //       head,
+    //       tail,
+    //       test
+    //     }
+    //     axios.post('/check-answer', data)
+    //       .then((res) => console.log(res.data))  
+    // })
     this.setState({
       passed,
       challengeSeed:[code]
     })
   }
 
-  runTest = (test) => {
-    if (!this._editor) return
-    var code = this._editor.getValue()
+  runTest = async (test) => {
+    // if (!this._editor) {
+    //   return
+    // }
+    let code = this._editor && this.editor.getValue() || this.state.challengeSeed.join("\n")
     let passed = true
     let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
     let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
-    try {
-      let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
-      eval(codeAndTest)
-    } catch(e) {
-      console.log(e)
-      passed = false
+    let data = {
+      code,
+      head,
+      tail,
+      test
     }
-    return passed
+
+    return testCode(data)
+    // axios.post('/check-answer', data)
+    //   .then((res) => {return res.data})
+    // try {
+    //   let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
+    //   eval(codeAndTest)
+    // } catch(e) {
+    //   console.log(e)
+    //   passed = false
+    // }
+    // return passed
   }
 
   render() {
     const { passed, assignment, description, challengeSeed, errorMsg, instructions } = this.state
     // const tests = this.state.assignment.tests.map( t => t.split("'message:"))
-    const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
+    // const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
     return (
       <div>
         <header id="App-header">
@@ -155,7 +175,7 @@ class App extends Component {
         </header>
         <div className={"challenge-description"}>
           {this.state.description.map((description, index) => {
-            return <ChallengeDescription description={description} index={index}/>
+            return <ChallengeDescription description={description} key={index} index={index}/>
           })}   
         </div>
         <div className="challenge-instructions-tests">
@@ -174,9 +194,9 @@ class App extends Component {
           mode="javascript"
           theme="monokai"
           value={challengeSeed.join("\n")}
-          height={250}
           ref={instance => { this.ace = instance; }}
           asi={false}
+          blockScrolling={true}
         />
           {/* <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p> */}
           <p className={"msg"}>{passed ? "All tests passed!": ""}</p>

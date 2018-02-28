@@ -6,7 +6,7 @@ const TestSuite  = (props) => {
   console.log(tests)
   return (
     <div>
-      {tests.map( (test, index) => <TestComponent key={index} test={test} runTest={runTest} testDescription={test} />)}
+      {tests.map( (test, index) => <TestComponent index={index} key={index} test={test} runTest={runTest} testDescription={test} />)}
     </div>
   )
 }

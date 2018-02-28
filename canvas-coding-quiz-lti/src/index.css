@@ -9,6 +9,7 @@ body {
 }
 
 #editor {
+  height: 250px!important;
   width:650px;
   border: 1px solid black;
   margin: 0 auto;

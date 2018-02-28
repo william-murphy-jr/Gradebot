@@ -8,6 +8,55 @@ const fs = require('fs')
 const canvas = require('./canvas-api')
 const config = require('./config')
 const path = require('path')
+const session = require("express-session")
+// console.log(assert)
+// 
+const vm = require('vm');
+const assert = require('assert');
+const expect = require('chai').expect;
+const chai = require('chai');
+const checkError = require('check-error');
+
+
+// evaluation of code with challenges and testing
+let codeEval = (req, res, next) => {
+   let result;
+   let data = req.body;
+   let code = data.code;
+   let test = `${data.head} \n ${data.code} \n ${data.tail} \n ${data.test} `
+
+   const sandbox = { assert, expect, checkError, chai, code };
+   vm.createContext(sandbox);
+   try {
+    result = vm.runInContext(test, sandbox);
+    res.locals.ref = true
+   } catch (e) {
+    result = checkError.getMessage(e);
+    res.locals.ref = false
+   }
+   }
+
+
+// const vm = new NodeVM({
+//     console: 'inherit',
+//     sandbox: {},
+//     require: {
+//         external: true,
+//         builtin: ['fs', 'path', 'assert'],
+//         root: "./"
+//     }
+// });
+
+
+// const script = new VMScript("console.log(path)");
+// console.log(vm.run("console.log(`hi`"));
+// console.log(vm.run(script));
+
+// console.log(vm)
+
+// var t = (a,b) => a + b 
+// var r = vm.run({console.log("hello world")}))
+// console.log(r)
 
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
@@ -32,8 +81,30 @@ function getAssignment(id) {
 }
 
 app.use(express.static(path.join(__dirname, 'build')));
-app.use(bodyParser.urlencoded());
+// app.use(bodyParser.urlencoded());
+app.use(bodyParser.json()) // handle json data
+app.use(bodyParser.urlencoded({ extended: true }))
 app.enable('trust proxy') // this lets req.proto == 'https'
+app.use(session({
+  secret: "TKRv0IJs=HYqrvagQ#&!F!%V]Ww/4KiVs$s,<<MX",
+  resave: true,
+  saveUninitialized: true
+}));
+
+
+app.post('/check-answer', (req, res, next) => {
+  // const script = new VMScript(req.body);
+  // console.log(vm.options.require)
+  // console.log(vm.run(req.body.codeAndTest));
+  // console.log(vm.run(script));
+  // console.log("req body",req.body)
+  // console.log("check")
+  codeEval(req,res,next)
+  res.send(res.locals.ref)
+})
+
+
+
 
 app.get('/', async (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
@@ -82,7 +153,7 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
 })
 
 app.get('/lti', async (req, res) => {
-  res.send(app.locals.tdata)
+  res.send(req.session.tdata)
 })
 
 app.post('/lti', async (req, res) => {
@@ -127,7 +198,8 @@ app.post('/lti', async (req, res) => {
         initstate.provider = provider
       }
       // console.log(tdata.initstate.assignment.solution)
-      app.locals.tdata = tdata
+      // app.locals.tdata = tdata
+      req.session.tdata = tdata
       res.sendFile(path.join(__dirname, 'build', 'index.html'));
 
       // ejs.renderFile('views/lti.ejs', tdata, null, (err,str) => {
@@ -152,4 +224,3 @@ app.listen(port, function () {
 
 // for debugging
 global.canvas = canvas
-
