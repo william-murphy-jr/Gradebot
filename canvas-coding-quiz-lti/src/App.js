@@ -3,21 +3,18 @@ import './App.css';
 import ChallengeDescription from './components/ChallengeDescription/ChallengeDescription'
 import TestSuite from './components/TestSuite/TestSuite'
 import React, { Component } from 'react';
-import { assert } from 'chai';
 import AceEditor from 'react-ace';
 import axios from 'axios'
-// window.assert = assert
+
 
 import 'brace/mode/javascript';
 import 'brace/theme/monokai';
 
 const testCode = (data) => { 
-  // console.log(data)
   return axios.post('/check-answer', data);
 }
 
-
-class App extends Component {
+export default class App extends Component {
 
   state = {
     assignment:  {
@@ -83,8 +80,8 @@ class App extends Component {
       "// Only change code below this line",
       ""
     ],
-    passed: false,
-    passing:[]
+    passing:[],
+    passed: false
   }
 
   //ONLY FOR TESTING TAKE OUT!!!!
@@ -94,110 +91,47 @@ class App extends Component {
   ////////////////////////////////
 
   makeTests() {
-    let passing = []
-    let code = this._editor && this._editor.getValue() || this.state.challengeSeed.join("\n")
-    let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
-    let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
-    this.state.assignment.tests.forEach((test) => {
-        let data = {
-          code,
-          head,
-          tail,
-          test
-        }
-        testCode(data)
-        .then((res) => {
-          passing.push(res.data)
-          this.setState({
-            passing
-          })
-        })
-    })
-    this.setState({challengeSeed:[code]})
+    let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    let data = { 
+      code,
+      head: this.state.assignment.head && this.state.assignment.head.join('\n'),
+      tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
+      tests: this.state.assignment.tests
+    }
+
+    testCode(data)
+      .then(res => this.setState({ 
+        passing: res.data,
+        challengeSeed:[code]
+      }))
   }
 
   componentDidMount() {
     this._editor = this.ace.editor
-    this._editor.$blockScrolling = Infinity;
+    this.challengeSeed = this.state.assignment.challengeSeed
     this.makeTests()
-    // axios.get('/lti')
-    //   .then(res => {
-    //     const assignment = res.data.assignment
-    //     this.challengeSeed = res.data.initstate.assignment.challengeSeed
-    //     this.setState({
-    //       assignment,
-    //       description: assignment.description,
-    //       challengeSeed: this.challengeSeed
-    //     });
-    //   })
   }
-
 
   onReset = () => {
     this.setState(prevState => ({
-      challengeSeed: this.challengeSeed,
-      errorMsg: ""
+      challengeSeed: this.challengeSeed
     }));
   }
 
-  onCheck = () => {
-    var code = this._editor.getValue()
-    let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
-    let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
-    // this.state.assignment.tests.forEach((test) => {
-    //     let data = {
-    //       code,
-    //       head,
-    //       tail,
-    //       test
-    //     }
-    //     axios.post('/check-answer', data)
-    //       .then((res) => console.log(res.data))  
-    // })
-    this.setState({
-      challengeSeed:[code], 
-      testing: !this.state.testing
-    })
-  }
-
-  async runTest (test){
-    let code = this._editor && this._editor.getValue() || this.state.challengeSeed.join("\n")
-    let passed = true
-    let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
-    let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
-    let data = {
-      code,
-      head,
-      tail,
-      test
-    }
-
-    return testCode(data)
-    // axios.post('/check-answer', data)
-    //   .then((res) => {return res.data})
-    // try {
-    //   let codeAndTest = `${head} \n ${code} \n ${tail} \n ${test} `
-    //   eval(codeAndTest)
-    // } catch(e) {
-    //   console.log(e)
-    //   passed = false
-    // }
-    // return passed
-  }
-
   render() {
-    const { assignment, description, 
-      challengeSeed, errorMsg, instructions, passed } = this.state
-    // const tests = this.state.assignment.tests.map( t => t.split("'message:"))
-    // const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
+    const { assignment, description, challengeSeed, } = this.state
+    // passed will check if the assignment tests are the same lenght as the passing array and if they are check to see if 
+    // any of them are false. If not of them are it will return true.
+    let passed = assignment.tests.length === this.state.passing.length && !this.state.passing.includes(false)
+
     return (
       <div>
         <header id="App-header">
-          <h4>{assignment.title}</h4>
+          <h3>{assignment.title}</h3>
           <hr/>
         </header>
         <div className={"challenge-description"}>
-          {this.state.description.map((description, index) => {
+          {description.map((description, index) => {
             return <ChallengeDescription description={description} key={index} index={index}/>
           })}   
         </div>
@@ -208,7 +142,7 @@ class App extends Component {
           </div>
           <div className="challenge-tests">
             <h3>Tests</h3>
-            <TestSuite passing={this.state.passing}tests={assignment.tests} runTest={this.runTest}/>
+            <TestSuite passing={this.state.passing}tests={assignment.tests}/>
           </div>
         </div>
         <hr />
@@ -218,21 +152,21 @@ class App extends Component {
           theme="monokai"
           value={challengeSeed.join("\n")}
           ref={instance => { this.ace = instance; }}
-          asi={false}
-          blockScrolling={true}
+          editorProps={{$blockScrolling: true}}
         />
-          {/* <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p> */}
           <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
         <div className={"submit-btns"}>
-          <input className={"btn"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Check Code" onClick={this.makeTests.bind(this)} />
-          <input className={"btn reset"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Reset Solution" onClick={this.onReset} />
-          <input className={"btn"} style={!passed ? {"display": "none"} : {} } type="button" defaultValue="Submit Solution" />
+        { !passed ? 
+            [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests.bind(this)} />,
+            <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
+          : 
+            <input className={"btn"} type="button" defaultValue="Submit Solution" />  
+        }
         </div>
       </div>
     )
   }
 }
 
-export default App;
 
 

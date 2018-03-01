@@ -9,14 +9,11 @@ const canvas = require('./canvas-api')
 const config = require('./config')
 const path = require('path')
 const session = require("express-session")
-// console.log(assert)
-// 
-const vm = require('vm');
-const assert = require('assert');
-const expect = require('chai').expect;
-const chai = require('chai');
-const checkError = require('check-error');
-
+const vm = require('vm')
+const assert = require('assert')
+const expect = require('chai').expect
+const chai = require('chai')
+const checkError = require('check-error')
 
 // evaluation of code with challenges and testing
 let codeEval = (req, res, next) => {
@@ -24,19 +21,27 @@ let codeEval = (req, res, next) => {
    let data = req.body;
    console.log(data)
    let code = data.code;
-   let test = `${data.head} \n ${data.code} \n ${data.tail} \n ${data.test} `
+   const tests = data.tests
+  //  let test = `${data.head} \n ${data.code} \n ${data.tail} \n ${data.test} `
+  let passingArray = []
 
    const sandbox = { assert, expect, checkError, chai, code };
    vm.createContext(sandbox);
-   try {
-    result = vm.runInContext(test, sandbox);
-    res.locals.ref = true
-    console.log(true)
-   } catch (e) {
-    result = checkError.getMessage(e);
-    res.locals.ref = false
-    console.log(false)
-   }
+   tests.forEach(test => {
+     let y = `${data.head} \n ${data.code} \n ${data.tail} \n ${test} `
+     try {
+      vm.runInContext(y, sandbox);
+      passingArray.push(true)
+     } catch (e) {
+       passingArray.push(false)
+      // result = checkError.getMessage(e);
+      // console.log(result)
+      // res.locals.ref = false
+      // console.log(false)
+     }
+   })
+
+   return passingArray;
    }
 
 
@@ -74,15 +79,9 @@ app.use(session({
 }));
 
 
-app.post('/check-answer', (req, res, next) => {
-  // const script = new VMScript(req.body);
-  // console.log(vm.options.require)
-  // console.log(vm.run(req.body.codeAndTest));
-  // console.log(vm.run(script));
-  // console.log("req body",req.body)
-  // console.log("check")
-  codeEval(req,res,next)
-  res.send(res.locals.ref)
+app.post('/check-answer', (req, res) => {
+  var theArray = codeEval(req,res)
+  res.send(theArray)
 })
 
 

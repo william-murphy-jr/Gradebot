@@ -1,34 +1,29 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import './TestComponent.css'
 
-class TestComponent  extends Component {
+export default class TestComponent  extends Component {
   
-  state = {
-    passed: false
-  }
+  static propTypes = {
+    index: PropTypes.number,
+    passing: PropTypes.array.isRequired,
+    test: PropTypes.string.isRequired
+  };
+  
   makeMessage = (test) => {
     const splitArr = this.props.test.split("'message:");
     return splitArr[1].replace("');", "")
   }
-
-  componentDidMount = () => {
-    this.props.runTest(this.props.test).then(res => {this.setState({ passed: res.data})})
-    
-  }
-  // componentDidUpdate = () => {
-  //   this.props.runTest(this.props.test).then(res => {this.setState({ passed: res.data})})
-  // }
   
   render() {
-    const { index, testDescription, runTest, test, passed} = this.props
-    // runTest(test).then(res => {
-    //   this.setState({ 
-    //     passed: res.data
-    // })})
+    const { index, test, passing} = this.props
+
     return (
-      <p key={index} style={
-        this.props.passing[index] ? {"color" : "green"} : {"color" : "red"}}dangerouslySetInnerHTML={{ __html: this.makeMessage(testDescription) }}></p>
+      <div className="test-description">
+        <span> {passing[index] ? "✅" : "❌" }</span>
+        <p key={index} dangerouslySetInnerHTML={{ __html: this.makeMessage(test) }}></p>
+      </div>
     )
   }
 }
 
-export default TestComponent
