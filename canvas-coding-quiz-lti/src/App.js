@@ -83,7 +83,8 @@ class App extends Component {
       "// Only change code below this line",
       ""
     ],
-    passed: false
+    passed: false,
+    passing:[]
   }
 
   //ONLY FOR TESTING TAKE OUT!!!!
@@ -92,9 +93,33 @@ class App extends Component {
   }
   ////////////////////////////////
 
+  makeTests() {
+    let passing = []
+    let code = this._editor && this._editor.getValue() || this.state.challengeSeed.join("\n")
+    let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
+    let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
+    this.state.assignment.tests.forEach((test) => {
+        let data = {
+          code,
+          head,
+          tail,
+          test
+        }
+        testCode(data)
+        .then((res) => {
+          passing.push(res.data)
+          this.setState({
+            passing
+          })
+        })
+    })
+    this.setState({challengeSeed:[code]})
+  }
+
   componentDidMount() {
     this._editor = this.ace.editor
     this._editor.$blockScrolling = Infinity;
+    this.makeTests()
     // axios.get('/lti')
     //   .then(res => {
     //     const assignment = res.data.assignment
@@ -107,6 +132,7 @@ class App extends Component {
     //   })
   }
 
+
   onReset = () => {
     this.setState(prevState => ({
       challengeSeed: this.challengeSeed,
@@ -116,7 +142,6 @@ class App extends Component {
 
   onCheck = () => {
     var code = this._editor.getValue()
-    let passed = true
     let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
     let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
     // this.state.assignment.tests.forEach((test) => {
@@ -130,16 +155,13 @@ class App extends Component {
     //       .then((res) => console.log(res.data))  
     // })
     this.setState({
-      passed,
-      challengeSeed:[code]
+      challengeSeed:[code], 
+      testing: !this.state.testing
     })
   }
 
-  runTest = async (test) => {
-    // if (!this._editor) {
-    //   return
-    // }
-    let code = this._editor && this.editor.getValue() || this.state.challengeSeed.join("\n")
+  async runTest (test){
+    let code = this._editor && this._editor.getValue() || this.state.challengeSeed.join("\n")
     let passed = true
     let head = this.state.assignment.head ? this.state.assignment.head.join('\n') : ""
     let tail = this.state.assignment.tail ? this.state.assignment.tail.join('\n') : ""
@@ -164,7 +186,8 @@ class App extends Component {
   }
 
   render() {
-    const { passed, assignment, description, challengeSeed, errorMsg, instructions } = this.state
+    const { assignment, description, 
+      challengeSeed, errorMsg, instructions, passed } = this.state
     // const tests = this.state.assignment.tests.map( t => t.split("'message:"))
     // const t = this.state.assignment.description.splice(description.indexOf("<hr>") + 1)
     return (
@@ -185,7 +208,7 @@ class App extends Component {
           </div>
           <div className="challenge-tests">
             <h3>Tests</h3>
-            <TestSuite tests={assignment.tests} runTest={this.runTest}/>
+            <TestSuite passing={this.state.passing}tests={assignment.tests} runTest={this.runTest}/>
           </div>
         </div>
         <hr />
@@ -201,7 +224,7 @@ class App extends Component {
           {/* <p className={"msg"} dangerouslySetInnerHTML={{ __html: errorMsg }}></p> */}
           <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
         <div className={"submit-btns"}>
-          <input className={"btn"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Check Code" onClick={this.onCheck} />
+          <input className={"btn"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Check Code" onClick={this.makeTests.bind(this)} />
           <input className={"btn reset"} style={passed ? {"display": "none"} : {} } type="button" defaultValue="Reset Solution" onClick={this.onReset} />
           <input className={"btn"} style={!passed ? {"display": "none"} : {} } type="button" defaultValue="Submit Solution" />
         </div>

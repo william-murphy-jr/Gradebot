@@ -22,6 +22,7 @@ const checkError = require('check-error');
 let codeEval = (req, res, next) => {
    let result;
    let data = req.body;
+   console.log(data)
    let code = data.code;
    let test = `${data.head} \n ${data.code} \n ${data.tail} \n ${data.test} `
 
@@ -30,33 +31,14 @@ let codeEval = (req, res, next) => {
    try {
     result = vm.runInContext(test, sandbox);
     res.locals.ref = true
+    console.log(true)
    } catch (e) {
     result = checkError.getMessage(e);
     res.locals.ref = false
+    console.log(false)
    }
    }
 
-
-// const vm = new NodeVM({
-//     console: 'inherit',
-//     sandbox: {},
-//     require: {
-//         external: true,
-//         builtin: ['fs', 'path', 'assert'],
-//         root: "./"
-//     }
-// });
-
-
-// const script = new VMScript("console.log(path)");
-// console.log(vm.run("console.log(`hi`"));
-// console.log(vm.run(script));
-
-// console.log(vm)
-
-// var t = (a,b) => a + b 
-// var r = vm.run({console.log("hello world")}))
-// console.log(r)
 
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
