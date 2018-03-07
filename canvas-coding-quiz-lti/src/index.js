@@ -1,7 +1,7 @@
 import './index.css';
 
-import App from './App';
+import GradeBot from './GradeBot';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<GradeBot />, document.getElementById('root'));

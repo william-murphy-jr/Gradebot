@@ -1,5 +1,5 @@
 import React from 'react'
-import TestComponent from '../TestComponent/TestComponent'
+import TestOutput from '../TestOutput/TestOutput'
 import PropTypes from 'prop-types'
 
 const TestSuite  = (props) => {
@@ -7,7 +7,7 @@ const TestSuite  = (props) => {
 
   return (
     <div>
-      {tests.map( (test, index) => <TestComponent passing={passing} 
+      {tests.map( (test, index) => <TestOutput passing={passing} 
       index={index} key={index} test={test} />)}
     </div>
   )
