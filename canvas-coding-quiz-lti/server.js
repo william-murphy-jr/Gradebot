@@ -20,7 +20,7 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, "/client/build")));
 
 app.use('/', indexRoute)
 app.use('/lti', ltiRoute)

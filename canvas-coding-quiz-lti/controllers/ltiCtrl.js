@@ -98,7 +98,7 @@ async function submit(req, res) {
 }
 
 function get (req,res) {
-  res.sendFile(path.join( __dirname, '../build', 'index.html'));
+  res.sendFile(path.join( __dirname, '../client/build', 'index.html'));
 }
 
 module.exports = {
