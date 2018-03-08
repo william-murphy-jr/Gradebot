@@ -1,6 +1,5 @@
 const express = require('express'),
       router = express.Router(),
-      bodyParser = require('body-parser'),
       ltiCtrl = require('../controllers/ltiCtrl.js');
 
 router.post('/', ltiCtrl.post)

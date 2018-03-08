@@ -1,9 +1,6 @@
-const express = require('express'),
-      router = express.Router(),
-      lti = require('ims-lti'),
+const lti = require('ims-lti'),
       config = require('../config'),
       fs =require('fs'),
-      bodyParser = require('body-parser'),
       path = require('path')
       cheapsession = {}
       fcc = load_freecodecamp_challenges()
@@ -52,6 +49,7 @@ function post(req, res) {
       }
       const sessid = Math.floor(Math.random() * 1000000).toString()
       cheapsession[sessid] = {req, provider, assignment}
+      req.session.assignment = assignment
       return res.redirect(`/lti/${assignment_id}/${sessid}`)
     }
   })
@@ -100,7 +98,6 @@ async function submit(req, res) {
 }
 
 function get (req,res) {
-  req.session.assignment = getAssignment(req.params.challengeId)
   res.sendFile(path.join( __dirname, '../build', 'index.html'));
 }
 

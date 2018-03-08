@@ -1,5 +1,4 @@
 const express = require('express')
-      app = express(),
       bodyParser = require('body-parser'),
       logger = require('morgan'),
       canvas = require('./canvas-api'),
@@ -8,11 +7,11 @@ const express = require('express')
 
       indexRoute = require('./routes/index'),
       ltiRoute = require('./routes/lti'),
-      staticPath = path.join(__dirname, "build"),
-      PORT = 3030;
+      PORT = 3030,
+
+      app = express();
 
 app.use(logger('dev'));
-app.use(express.static(staticPath));
 app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true }))
 app.enable('trust proxy') // this lets req.proto == 'https'
@@ -21,17 +20,10 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
+app.use(express.static(path.join(__dirname, "build")));
 
 app.use('/', indexRoute)
 app.use('/lti', ltiRoute)
-
-
-
-
-
-
-
-
 
 app.listen(PORT, function (err) {
   console.log(err || `ltitool on ${PORT}`)
