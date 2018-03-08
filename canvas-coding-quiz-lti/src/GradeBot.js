@@ -121,9 +121,6 @@ export default class GradeBot extends Component {
           value={challengeSeed.join("\n")}
           ref={instance => { this.ace = instance; }}
           editorProps={{$blockScrolling: true}}
-          setOptions={
-            {spellcheck: true}
-          }
         />
           <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
         <div className={"submit-btns"}>

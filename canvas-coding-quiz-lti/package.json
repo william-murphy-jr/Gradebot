@@ -15,6 +15,7 @@
     "express-session": "^1.15.6",
     "ims-lti": "^3.0.2",
     "jquery": "^3.3.1",
+    "morgan": "^1.9.0",
     "node-fetch": "^1.7.2",
     "nodemon": "^1.11.0",
     "react": "^15.5.4",

@@ -1,66 +1,18 @@
 const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
-const lti = require('ims-lti')
-// const ejs = require('ejs')
-const fetch = require('node-fetch')
-const fs = require('fs')
-const canvas = require('./canvas-api')
-const config = require('./config')
-const path = require('path')
-const session = require("express-session")
-const vm = require('vm')
-const assert = require('assert')
-const expect = require('chai').expect
-const chai = require('chai')
+      app = express(),
+      bodyParser = require('body-parser'),
+      logger = require('morgan'),
+      canvas = require('./canvas-api'),
+      path = require('path'),
+      session = require("express-session"),
 
-// evaluation of code with challenges and testing
-let codeEval = (req, res, next) => {
-  const data = req.body;
-  const code = data.code;
-  const tests = data.tests
-  const evalOfTests = []
-  const sandbox = { assert, expect, chai, code };
-  vm.createContext(sandbox);
-  tests.forEach(test => {
-    let fullTest = `${data.head} \n ;\n;${code};\n \n ${data.tail} \n ${test} `
-    try {
-      vm.runInContext(fullTest, sandbox);
-      evalOfTests.push(true)
-    } catch (e) {
-      evalOfTests.push(false)
-    }
-   })
-  return evalOfTests;
-}
+      indexRoute = require('./routes/index'),
+      ltiRoute = require('./routes/lti'),
+      staticPath = path.join(__dirname, "build"),
+      PORT = 3030;
 
-
-const cheapsession = {}
-const fcc = load_freecodecamp_challenges()
-
-function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freecodecamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
-  const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
-  const fcc_index = {}
-  for (let challenge of fcc_data.challenges) {
-    fcc_index[challenge.id] = challenge
-  }
-  return {fcc_data, fcc_index}
-}
-
-
-
-function getAssignment(id) {
-  if (fcc.fcc_index[id]) {
-    var challenge = fcc.fcc_index[id]
-    console.log('found FCC challenge',challenge)
-    return challenge
-  }
-  console.error(`unable to find assignment with id ${id}`)
-}
-
-app.use(express.static(path.join(__dirname, 'build')));
-// app.use(bodyParser.urlencoded());
+app.use(logger('dev'));
+app.use(express.static(staticPath));
 app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true }))
 app.enable('trust proxy') // this lets req.proto == 'https'
@@ -70,154 +22,19 @@ app.use(session({
   saveUninitialized: true
 }));
 
-// app.get('*', (req, res) => {
-//   console.log('setting data')
-//   req.session.tdata = fcc
-//   console.log(req.session.tdata.fcc_data.id[])
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// })
-
-// app.get('/', (req, res) => {
-//   req.session.tdata = fcc
-//   console.log(req.session)
-//   console.log("hye")
-// })
-
-// console.log('right file')
-
-
-app.post('/check-answer', (req, res) => {
-  var theArray = codeEval(req,res)
-  res.send(theArray)
-})
-
-app.post('/lti-grade', bodyParser.json(), async (req, res) => {
-  console.log('submit solution params',req.body)
-  var sessid = req.body.session
-  var data = cheapsession[sessid]
-
-  if (data) {
-    console.log('found session',data)
-    var origbody = data.req.body
-    // use these two to check if the student already made a submission
-    // get single user's submission:
-    // https://canvas.instructure.com/doc/api/submissions.html#method.submissions_api.show
-    var canvas_assignment_id = origbody.custom_canvas_assignment_id
-    var canvas_course_id = origbody.custom_canvas_course_id
-    var provider = data.provider
-    var assignment = data.assignment
-    var code = req.body.code
-    var correct = req.body.state &&
-        req.body.state.checked &&
-        req.body.state.checked.result &&
-        req.body.state.checked.result.passed
-
-    if (!provider.outcome_service) {
-      res.send({error:'you must be a student to submit'})
-      return
-    }
-    function cb(err, result) {
-      console.log('grade submission result',err,result)
-      res.send({error:err,success:result})
-    }
-    console.log('user submitting grade correct:',correct)
-    if (correct) {
-      provider.outcome_service.send_replace_result_with_text( 1, code, cb )
-    } else {
-      res.send({error:'incorrect solution.'})
-      //provider.outcome_service.send_replace_result_with_text( 0, code, cb )
-    }
-    
-  } else {
-    res.send({error:'session not found. try reloading'})
-  }
-})
-
-app.get('/get-state', (req, res) => {
-  res.send(req.session.assignment)
-})
-
-app.get('/lti', async (req, res) => {
-  // console.log(`this is the session ${req.seeson}`)
-  res.send(req.session.tdata)
-})
-
-app.post('/lti', async (req, res) => {
-    /* TODO - fetch user's previous submission */
-    // console.log("here is the body", req.body)
-
-  const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
-  // console.log('lti launch params',req.body)
-  console.log(provider.valid_request)
-  provider.valid_request(req, async (err, isValid) => {
-    if (err) {
-      console.error('invalid request',err)
-      res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
-    } else {
-
-      const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid
-      const course_id = req.body.custom_canvas_course_id
-      const user_id = req.body.user_id
-      
-      const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
-      const assignments_link = `/courses/${course_id}/assignments`
-      
-      // console.log('provider good',provider)
-      // if external tool is an assignment, then it will have outcome_service_url
-      var assignment
-      if (req.query.assignmentid) {
-        // fetch the assignment id information
-        assignment = getAssignment(req.query.assignmentid)
-      }
-      var sessid = Math.floor(Math.random() * 1000000).toString()
-      cheapsession[sessid] = {req, provider, assignment}
-      res.redirect(`/coding-challenge/${assignment_id}/${sessid}`)
-      return 
-      const tdata = {
-        initstate: {
-          body:req.body,
-          assignment:assignment,
-          session: sessid,
-          submitted: submitted,
-          assignments_link: assignments_link
-        }
-      }
-      if (false) { // debug
-        initstate.provider = provider
-      }
-      // console.log(tdata.initstate.assignment.solution)
-      // app.locals.tdata = tdata
-      req.session.tdata = tdata
-      // console.log("hello:",req.session.tdata.fcc_data)
-      // res.sendFile(path.join(__dirname, 'build', 'index.html'));
-
-      // ejs.renderFile('views/lti.ejs', tdata, null, (err,str) => {
-      //   if (err) {
-      //     console.error(err)
-      //     res.send('Internal Server Error',500)
-      //   } else {
-      //     console.log("this is the str", str)
-      //     res.send(str)
-      //   }
-      // })
-    }
-  })
-})
+app.use('/', indexRoute)
+app.use('/lti', ltiRoute)
 
 
 
-app.get('/coding-challenge/:challengeId/:sessionId', (req,res) => {
-  // console.log(req.params.challengeId)
-  // console.log(fcc.fcc_data)
-  req.session.assignment = getAssignment(req.params.challengeId)
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-})
 
 
 
-const port = 3030
-app.listen(port, function (err) {
-  console.log(err || `ltitool on ${port}`)
+
+
+
+app.listen(PORT, function (err) {
+  console.log(err || `ltitool on ${PORT}`)
 })
 
 // for debugging
