@@ -1,4 +1,4 @@
-#App-header {
+#GradeBot-header {
   text-align: center;
 }
 
@@ -22,3 +22,8 @@
   display: flex;
   justify-content: space-evenly;
 }
+
+#editor {
+  margin-top: 50px;
+}
+

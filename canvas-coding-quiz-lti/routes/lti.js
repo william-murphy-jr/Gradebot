@@ -3,7 +3,7 @@ const express = require('express'),
       ltiCtrl = require('../controllers/ltiCtrl.js');
 
 router.post('/', ltiCtrl.post)
-router.post('/grade', bodyParser.json(), ltiCtrl.submit)
+router.post('/grade', ltiCtrl.submit)
 router.get('/:challengeId/:sessionId', ltiCtrl.get)
 
 

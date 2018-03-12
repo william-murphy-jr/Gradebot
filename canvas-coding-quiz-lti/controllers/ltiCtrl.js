@@ -1,9 +1,11 @@
-const lti = require('ims-lti'),
-      config = require('../config'),
-      fs =require('fs'),
-      path = require('path')
-      cheapsession = {}
-      fcc = load_freecodecamp_challenges()
+const lti = require('ims-lti')
+const config = require('../config')
+const fs =require('fs')
+const path = require('path')
+const cheapsession = {}
+let ID;
+const fcc = load_freecodecamp_challenges()
+
 
 //Helper Functions
 
@@ -41,40 +43,54 @@ function post(req, res) {
             user_id = req.body.user_id,
             submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`),
             assignments_link = `/courses/${course_id}/assignments`
+
+      console.log('provider good',provider)
+
       let assignmnet;
       // console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
       if (req.query.assignmentid) {
         assignment = getAssignment(req.query.assignmentid)
       }
-      const sessid = Math.floor(Math.random() * 1000000).toString()
-      cheapsession[sessid] = {req, provider, assignment}
+      req.session.sessid = Math.floor(Math.random() * 1000000)
+      .toString()
+      id = req.session.sessid
+      console.log("course_id", req.body.course_id)
+      req.session.cheapsession = {}
+      cheapsession[id] = {provider, assignment, req}
+      req.session.cheapsession[req.session.sessid] = { provider, assignment }
+      cheapsession[000] = { provider }
       req.session.assignment = assignment
-      return res.redirect(`/lti/${assignment_id}/${sessid}`)
+      console.log(cheapsession)
+      return res.redirect(`/lti/${assignment_id}/${req.session.sessid}`)
     }
   })
 }
 
 async function submit(req, res) {
   // console.log('submit solution params',req.body)
-  const sessid = req.body.session
-  const data = cheapsession[sessid]
+  // console.log('req.session',req.body)
+  // console.log(req.session)
+  const sessid = req.session.sessid
+  const data = req.session.cheapsession[sessid]
+  // console.log("~~~~~~~~~", data.provider.outcome_service, "~~~~~~~~~#############################################")
 
   if (data) {
-    console.log('found session',data)
-    const origbody = data.req.body
+    // console.log('found session',data)
+    // const origbody = data.req.body
     // use these two to check if the student already made a submission
     // get single user's submission:
     // https://canvas.instructure.com/doc/api/submissions.html#method.submissions_api.show
-    const canvas_assignment_id = origbody.custom_canvas_assignment_id
-    const canvas_course_id = origbody.custom_canvas_course_id
-    const provider = data.provider
+    // const canvas_assignment_id = origbody.custom_canvas_assignment_id
+    // const canvas_course_id = origbody.custom_canvas_course_id
+    const provider = cheapsession[sessid].provider
     const assignment = data.assignment
     const code = req.body.code
-    const correct = req.body.state &&
-        req.body.state.checked &&
-        req.body.state.checked.result &&
-        req.body.state.checked.result.passed
+    const correct = true
+    // req.body.state &&
+    //     req.body.state.checked &&
+    //     req.body.state.checked.result &&
+    //     req.body.state.checked.result.passed
 
     if (!provider.outcome_service) {
       res.send({error:'you must be a student to submit'})
@@ -82,14 +98,15 @@ async function submit(req, res) {
     }
     function cb(err, result) {
       console.log('grade submission result',err,result)
-      res.send({error:err,success:result})
+      // redirect them to there grade
+      res.redirect('courses/9/assignments')
     }
-    console.log('user submitting grade correct:',correct)
+    // console.log('user submitting grade correct:',correct)
     if (correct) {
       provider.outcome_service.send_replace_result_with_text( 1, code, cb )
     } else {
       res.send({error:'incorrect solution.'})
-      //provider.outcome_service.send_replace_result_with_text( 0, code, cb )
+      provider.outcome_service.send_replace_result_with_text( 0, code, cb )
     }
     
   } else {
@@ -104,6 +121,8 @@ function get (req,res) {
 module.exports = {
   submit,
   get,
-  post
+  post,
+  load_freecodecamp_challenges,
+  getAssignment
 }
 

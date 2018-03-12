@@ -42,6 +42,31 @@ export default class GradeBot extends Component {
   // }
   ////////////////////////////////
 
+  submit_solution = async () =>{
+    const body = {
+      code: this._editor.getValue(),
+      assignment: this.state.assignment
+    }
+    axios.post('/lti/grade', body)
+    /* submit user's code solution to be graded */
+    // const API_ENDPOINT = '/lti-grade'
+    // const body = {
+    //   code: user_code,
+    //   state: state,
+    //   assignment: assignment,
+    //   session: sessid
+    // }
+    // const opts = {
+    //   method:'post',
+    //   headers: { "Content-Type": "application/json; charset=utf-8" },
+    //   body: JSON.stringify(body)
+    // }
+    // const result = await fetch(API_ENDPOINT, opts)
+    // const j = await result.json()
+    // console.log('submit solution result',result,j)
+    // return j
+  }
+
   makeTests() {
     let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
     let data = { 
@@ -65,14 +90,14 @@ export default class GradeBot extends Component {
 
     await getChallenge()
       .then(res => {
-        const description = res.data.description
-        const instructions = description.splice(res.data.description.indexOf("<hr>") + 1)
+        const description = res.data.assignment.description
+        const instructions = description.splice(res.data.assignment.description.indexOf("<hr>") + 1)
         this.setState({
-          assignment: res.data,
-          challengeSeed: res.data.challengeSeed,
+          assignment: res.data.assignment,
+          challengeSeed: res.data.assignment.challengeSeed,
           description,
           instructions,
-          tests: res.data.tests
+          tests: res.data.assignment.tests,
         })
       })
     this.makeTests()
@@ -86,10 +111,10 @@ export default class GradeBot extends Component {
 
   render() {
     console.log(this.state)
-    const { assignment, description, challengeSeed, passed, tests } = this.state
+    const { assignment, description, challengeSeed, tests } = this.state
     // passed will check if the assignment tests are the same lenght as the passing array and if they are check to see if 
     // any of them are false. If not of them are it will return true.
-    // let passed = assignment.tests.length === this.state.passing.length && !this.state.passing.includes(false)
+    let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
 
     return (
       <div>
@@ -112,23 +137,21 @@ export default class GradeBot extends Component {
             <TestSuite passing={this.state.passing}tests={tests}/>
           </div>
         </div>
-        <hr />
         <AceEditor 
           name="editor"
-          className="bigitem"
           mode="javascript"
           theme="monokai"
           value={challengeSeed.join("\n")}
           ref={instance => { this.ace = instance; }}
           editorProps={{$blockScrolling: true}}
         />
-          <p className={"msg"}>{passed ? "All tests passed!": ""}</p>
+          {/* <p className={"msg"}>{passed ? "All tests passed!": ""}</p> */}
         <div className={"submit-btns"}>
         { !passed ? 
             [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests.bind(this)} />,
             <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
           : 
-            <input className={"btn"} type="button" defaultValue="Submit Solution" />  
+            <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
         }
         </div>
       </div>
