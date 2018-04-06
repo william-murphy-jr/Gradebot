@@ -1,15 +1,15 @@
 const express = require('express')
-      bodyParser = require('body-parser'),
-      logger = require('morgan'),
-      canvas = require('./canvas-api'),
-      path = require('path'),
-      session = require("express-session"),
+const bodyParser = require('body-parser')
+const logger = require('morgan')
+const canvas = require('./canvas-api')
+const path = require('path')
+const session = require("express-session")
+const PORT = 3030
 
-      indexRoute = require('./routes/index'),
-      ltiRoute = require('./routes/lti'),
-      PORT = 3030,
+const indexRoute = require('./routes/index')
+const ltiRoute = require('./routes/lti')
 
-      app = express();
+const app = express();
 
 app.use(logger('dev'));
 app.use(bodyParser.json()) // handle json data

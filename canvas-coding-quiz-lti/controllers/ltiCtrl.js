@@ -3,9 +3,7 @@ const config = require('../config')
 const fs =require('fs')
 const path = require('path')
 const cheapsession = {}
-let ID;
 const fcc = load_freecodecamp_challenges()
-
 
 //Helper Functions
 
@@ -68,15 +66,10 @@ function post(req, res) {
 }
 
 async function submit(req, res) {
-  // console.log('submit solution params',req.body)
-  // console.log('req.session',req.body)
-  // console.log(req.session)
   const sessid = req.session.sessid
   const data = req.session.cheapsession[sessid]
-  // console.log("~~~~~~~~~", data.provider.outcome_service, "~~~~~~~~~#############################################")
-
   if (data) {
-    // console.log('found session',data)
+    console.log('found session',data)
     // const origbody = data.req.body
     // use these two to check if the student already made a submission
     // get single user's submission:
@@ -91,19 +84,20 @@ async function submit(req, res) {
     //     req.body.state.checked &&
     //     req.body.state.checked.result &&
     //     req.body.state.checked.result.passed
-
     if (!provider.outcome_service) {
+      console.log("am i here")
       res.send({error:'you must be a student to submit'})
       return
     }
     function cb(err, result) {
       console.log('grade submission result',err,result)
+      return {f: "hello"}
       // redirect them to there grade
-      res.redirect('courses/9/assignments')
     }
     // console.log('user submitting grade correct:',correct)
     if (correct) {
-      provider.outcome_service.send_replace_result_with_text( 1, code, cb )
+      console.log("this is correct")
+      return provider.outcome_service.send_replace_result_with_text( 1, code, cb )
     } else {
       res.send({error:'incorrect solution.'})
       provider.outcome_service.send_replace_result_with_text( 0, code, cb )
