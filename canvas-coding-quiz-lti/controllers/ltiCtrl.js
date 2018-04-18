@@ -26,7 +26,7 @@ function load_freecodecamp_challenges() {
   return {fcc_data, fcc_index}
 }
 
-function post(req, res) {
+async function post(req, res) {
   /* TODO - fetch user's previous submission */
   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
   // console.log('lti launch params',req.body)
@@ -38,7 +38,7 @@ function post(req, res) {
     } else {
       const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid
       const course_id = req.body.custom_canvas_course_id
-      const user_id = req.body.user_id
+      const user_id = req.body.custom_canvas_user_id
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
 
@@ -55,11 +55,11 @@ function post(req, res) {
       id = req.session.sessid
       console.log("course_id", req.body.course_id)
       req.session.cheapsession = {}
-      // cheapsession[id] = {provider, assignment, req}
-      // req.session.cheapsession[req.session.sessid] = { provider, assignment }
+      cheapsession[id] = {provider, assignment, req}
+      req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
-      // req.session.assignment = assignment
-      console.log(cheapsession)
+      req.session.assignment = assignment
+      console.log(req.session)
       return res.redirect(`/`)
     }
   })
