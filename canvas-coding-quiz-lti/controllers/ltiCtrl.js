@@ -60,7 +60,7 @@ function post(req, res) {
       cheapsession[000] = { provider }
       req.session.assignment = assignment
       console.log(cheapsession)
-      return res.redirect(`/lti/${assignment_id}/${req.session.sessid}`)
+      return res.redirect(`/`)
     }
   })
 }
