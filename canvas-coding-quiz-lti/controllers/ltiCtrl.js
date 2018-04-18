@@ -109,7 +109,8 @@ async function submit(req, res) {
 }
 
 function get (req,res) {
-  res.sendFile(path.join( __dirname, '../client/build', 'index.html'));
+  console.log('im in ')
+  res.redirect('/')
 }
 
 module.exports = {
