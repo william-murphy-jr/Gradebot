@@ -42,7 +42,7 @@ function post(req, res) {
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
 
-      console.log('provider good',provider)
+      // console.log('provider good',provider)
 
       let assignmnet;
       // console.log('provider good',provider)
@@ -55,7 +55,7 @@ function post(req, res) {
       id = req.session.sessid
       console.log("course_id", req.body.course_id)
       req.session.cheapsession = {}
-      cheapsession[id] = {provider, assignment, req}
+      // cheapsession[id] = {provider, assignment, req}
       req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
       req.session.assignment = assignment
