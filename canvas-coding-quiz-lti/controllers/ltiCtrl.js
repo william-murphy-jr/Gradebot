@@ -26,43 +26,127 @@ function load_freecodecamp_challenges() {
   return {fcc_data, fcc_index}
 }
 
-function post(req, res) {
+// function post(req, res) {
+//   /* TODO - fetch user's previous submission */
+//   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
+//   // console.log('lti launch params',req.body)
+//   // console.log(provider.valid_request)
+//   provider.valid_request(req, async (err, isValid) => {
+//     if (err) {
+//       console.error('invalid request',err)
+//       res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
+//     } else {
+//       const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid,
+//             course_id = req.body.custom_canvas_course_id,
+//             user_id = req.body.user_id,
+//             submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`),
+//             assignments_link = `/courses/${course_id}/assignments`
+
+//       console.log('provider good',provider)
+
+//       let assignmnet;
+//       // console.log('provider good',provider)
+//       // if external tool is an assignment, then it will have outcome_service_url
+//       if (req.query.assignmentid) {
+//         assignment = getAssignment(req.query.assignmentid)
+//       }
+//       req.session.sessid = Math.floor(Math.random() * 1000000)
+//       .toString()
+//       id = req.session.sessid
+//       console.log("course_id", req.body.course_id)
+//       req.session.cheapsession = {}
+//       cheapsession[id] = {provider, assignment, req}
+//       req.session.cheapsession[req.session.sessid] = { provider, assignment }
+//       cheapsession[000] = { provider }
+//       req.session.assignment = assignment
+//       console.log(cheapsession)
+//       return res.redirect(`/`)
+//     }
+//   })
+// }
+
   /* TODO - fetch user's previous submission */
-  const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
+  // console.log("adksjfhaskdljhfaksjdfhkasjdhfkalsdjhfl;asdfjasl;kdf jas;lkdfj aslkdf")
+  const provider = new lti.Provider( config.consumer_key,
+                                     config.consumer_secret )
   // console.log('lti launch params',req.body)
-  // console.log(provider.valid_request)
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
       console.error('invalid request',err)
       res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
     } else {
-      const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid,
-            course_id = req.body.custom_canvas_course_id,
-            user_id = req.body.user_id,
-            submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`),
-            assignments_link = `/courses/${course_id}/assignments`
 
-      console.log('provider good',provider)
-
-      let assignmnet;
-      // console.log('provider good',provider)
+      const assignment_id = req.body.custom_canvas_assignment_id
+      const course_id = req.body.custom_canvas_course_id
+      const user_id = req.body.custom_canvas_user_id
+      
+      const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
+      const assignments_link = `/courses/${course_id}/assignments`
+      
+      // console.log('provider good',provider,"$$$54592345823oiruvjwnofsopdigfmps o")
       // if external tool is an assignment, then it will have outcome_service_url
+      var assignment
       if (req.query.assignmentid) {
+        // fetch the assignment id information
         assignment = getAssignment(req.query.assignmentid)
       }
-      req.session.sessid = Math.floor(Math.random() * 1000000)
-      .toString()
-      id = req.session.sessid
-      console.log("course_id", req.body.course_id)
-      req.session.cheapsession = {}
-      cheapsession[id] = {provider, assignment, req}
-      req.session.cheapsession[req.session.sessid] = { provider, assignment }
-      cheapsession[000] = { provider }
-      req.session.assignment = assignment
-      console.log(cheapsession)
-      return res.redirect(`/`)
-    }
-  })
+      var sessid = Math.floor(Math.random() * 1000000).toString()
+      cheapsession[sessid] = {req, provider, assignment}
+      // console.log(cheapsession)
+      const tdata = {
+        initstate: {
+          body:req.body,
+          assignment:assignment,
+          session: sessid,
+          submitted: submitted,
+          assignments_link: assignments_link
+        }
+      }
+      if (false) { // debug
+        initstate.provider = provider
+      }
+function post(req, res) {
+    /* TODO - fetch user's previous submission */
+  // console.log("adksjfhaskdljhfaksjdfhkasjdhfkalsdjhfl;asdfjasl;kdf jas;lkdfj aslkdf")
+  const provider = new lti.Provider( config.consumer_key,
+    config.consumer_secret )
+// console.log('lti launch params',req.body)
+provider.valid_request(req, async (err, isValid) => {
+if (err) {
+console.error('invalid request',err)
+res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
+} else {
+
+const assignment_id = req.body.custom_canvas_assignment_id
+const course_id = req.body.custom_canvas_course_id
+const user_id = req.body.custom_canvas_user_id
+
+const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
+const assignments_link = `/courses/${course_id}/assignments`
+
+// console.log('provider good',provider,"$$$54592345823oiruvjwnofsopdigfmps o")
+// if external tool is an assignment, then it will have outcome_service_url
+var assignment
+if (req.query.assignmentid) {
+// fetch the assignment id information
+assignment = getAssignment(req.query.assignmentid)
+}
+var sessid = Math.floor(Math.random() * 1000000).toString()
+cheapsession[sessid] = {req, provider, assignment}
+// console.log(cheapsession)
+const tdata = {
+initstate: {
+body:req.body,
+assignment:assignment,
+session: sessid,
+submitted: submitted,
+assignments_link: assignments_link
+}
+}
+if (false) { // debug
+initstate.provider = provider
+}
+
 }
 
 async function submit(req, res) {
@@ -76,6 +160,9 @@ async function submit(req, res) {
     // https://canvas.instructure.com/doc/api/submissions.html#method.submissions_api.show
     // const canvas_assignment_id = origbody.custom_canvas_assignment_id
     // const canvas_course_id = origbody.custom_canvas_course_id
+    const assignment_id = req.body.custom_canvas_assignment_id
+    const course_id = req.body.custom_canvas_course_id
+    const user_id = req.body.custom_canvas_user_id
     const provider = cheapsession[sessid].provider
     const assignment = data.assignment
     const code = req.body.code
