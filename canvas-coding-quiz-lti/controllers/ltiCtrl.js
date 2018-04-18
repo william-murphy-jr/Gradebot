@@ -56,9 +56,9 @@ function post(req, res) {
       console.log("course_id", req.body.course_id)
       req.session.cheapsession = {}
       // cheapsession[id] = {provider, assignment, req}
-      req.session.cheapsession[req.session.sessid] = { provider, assignment }
+      // req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
-      req.session.assignment = assignment
+      // req.session.assignment = assignment
       console.log(cheapsession)
       return res.redirect(`/`)
     }
