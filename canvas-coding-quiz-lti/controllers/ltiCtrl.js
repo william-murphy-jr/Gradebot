@@ -20,7 +20,7 @@ function load_freecodecamp_challenges() {
   const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json' ]
   const fcc_index = {}
   fcc_includes.forEach(c => {
-    const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))   
+    const fcc_data = JSON.parse(fs.readFileSync(c))   
     for (let challenge of fcc_data.challenges) {
       fcc_index[challenge.id] = challenge
     }
@@ -92,7 +92,6 @@ async function submit(req, res) {
     //     req.body.state.checked.result &&
     //     req.body.state.checked.result.passed
     if (!provider.outcome_service) {
-      console.log("am i here")
       res.send({error:'you must be a student to submit'})
       return
     }
