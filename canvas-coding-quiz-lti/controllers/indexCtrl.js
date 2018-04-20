@@ -51,7 +51,7 @@ function load_freecodecamp_challenges() {
 }
 
 function get(req, res) {
-  // req.session.assignment = req.session.assignment || getAssignment('5900f36e1000cf542c50fe80')
+  req.session.assignment = req.session.assignment || getAssignment('5900f36e1000cf542c50fe80')
   res.send({assignment : req.session.assignment, sessionId: req.session.sessionId })
 }
 
