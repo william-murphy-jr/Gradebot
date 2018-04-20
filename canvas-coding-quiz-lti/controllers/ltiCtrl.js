@@ -4,7 +4,6 @@ const fs =require('fs')
 const path = require('path')
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
-console.log(fcc)
 
 //Helper Functions
 
@@ -18,15 +17,13 @@ function getAssignment(id) {
 }
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', `freeCodeCamp/seed/challenges/08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json` ]
-  const fcc_index = {}
-  fcc_includes.forEach(c => {
-    const fcc_data = JSON.parse(fs.readFileSync(c))
-    for (let challenge of fcc_data.challenges) {
-      fcc_index[challenge.id] = challenge
-    }
-  })
-  return {fcc_index}
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ],
+        fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0])),
+        fcc_index = {}
+  for (let challenge of fcc_data.challenges) {
+    fcc_index[challenge.id] = challenge
+  }
+  return {fcc_data, fcc_index}
 }
 
 async function post(req, res) {
@@ -42,7 +39,7 @@ async function post(req, res) {
       const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid
       const course_id = req.body.custom_canvas_course_id
       const user_id = req.body.custom_canvas_user_id
-      const submitted = await canvas.req(`courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
+      const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
 
       // console.log('provider good',provider)
