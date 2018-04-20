@@ -17,13 +17,16 @@ function getAssignment(id) {
 }
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ],
-        fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0])),
-        fcc_index = {}
-  for (let challenge of fcc_data.challenges) {
-    fcc_index[challenge.id] = challenge
-  }
-  return {fcc_data, fcc_index}
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json' ]
+  const fcc_index = {}
+  fcc_includes.forEach(c => {
+    const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))   
+    for (let challenge of fcc_data.challenges) {
+      fcc_index[challenge.id] = challenge
+    }
+  })
+
+  return {fcc_index}
 }
 
 async function post(req, res) {
