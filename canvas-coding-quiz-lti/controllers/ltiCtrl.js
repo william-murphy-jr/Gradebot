@@ -63,7 +63,7 @@ async function post(req, res) {
       req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
       req.session.assignment = assignment
-      // console.log(req.session)
+      console.log(req.session.assignment)
       return res.redirect(`/`)
     }
   })
