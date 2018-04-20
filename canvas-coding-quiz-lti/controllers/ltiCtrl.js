@@ -51,18 +51,19 @@ async function post(req, res) {
       // console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
       if (req.query.assignmentid) {
+        console.log("~~~~~~~", req.query, "~~~~~~~~~~`")
         assignment = getAssignment(req.query.assignmentid)
       }
       req.session.sessid = Math.floor(Math.random() * 1000000)
       .toString()
       id = req.session.sessid
-      console.log("course_id", req.body.course_id)
+      // console.log("course_id", req.body.course_id)
       req.session.cheapsession = {}
       cheapsession[id] = {provider, assignment, req}
       req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
       req.session.assignment = assignment
-      console.log(req.session)
+      // console.log(req.session)
       return res.redirect(`/`)
     }
   })
