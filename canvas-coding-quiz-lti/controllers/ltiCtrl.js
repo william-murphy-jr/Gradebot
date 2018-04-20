@@ -115,7 +115,6 @@ async function submit(req, res) {
 }
 
 function get (req,res) {
-  console.log('im in ')
   res.redirect('/')
 }
 
