@@ -5,19 +5,10 @@ import TestSuite from './components/TestSuite/TestSuite'
 import Completed from './components/Completed/Completed'
 import AceEditor from 'react-ace'
 import React, { Component } from 'react'
-import axios from 'axios'
 import httpClient from './httpClient.js'
 
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
-
-const testCode = (data) => { 
-  return axios.post('/check-answer', data);
-}
-
-const getChallenge = () => {
-  return axios.get('/get-state')
-}
 
 export default class GradeBot extends Component {
 
@@ -36,13 +27,13 @@ export default class GradeBot extends Component {
       code: this._editor.getValue(),
       assignment: this.state.assignment
     }
-    axios.post('/lti/grade', body)
+    httpClient.grade(body)
     this.setState({
       completed: true
     })
   }
 
-  makeTests() {
+  makeTests = () => {
     let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
     let data = { 
       code,
@@ -124,7 +115,7 @@ export default class GradeBot extends Component {
           />
           <div className={"submit-btns"}>
           { !passed ? 
-              [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests.bind(this)} />,
+              [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,
               <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
             : 
               <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
