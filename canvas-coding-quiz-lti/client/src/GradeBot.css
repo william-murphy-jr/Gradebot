@@ -23,6 +23,10 @@
   justify-content: space-evenly;
 }
 
+.challenge-instuctions, .challenge-tests {
+  width: 40%;
+}
+
 #editor {
   margin-top: 50px;
 }

@@ -6,6 +6,7 @@ import Completed from './components/Completed/Completed'
 import AceEditor from 'react-ace'
 import React, { Component } from 'react'
 import axios from 'axios'
+import httpClient from './httpClient.js'
 
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
@@ -50,7 +51,7 @@ export default class GradeBot extends Component {
       tests: this.state.assignment.tests
     }
 
-    testCode(data)
+    httpClient.testCode(data)
       .then(res => this.setState({ 
         passing: res.data,
         challengeSeed:[code]
@@ -61,7 +62,7 @@ export default class GradeBot extends Component {
     this._editor = this.ace.editor
     this.challengeSeed = this.state.assignment.challengeSeed
 
-    await getChallenge()
+    await httpClient.getChallenge()
       .then(res => {
         const description = res.data.assignment.description
         const instructions = description.splice(res.data.assignment.description.indexOf("<hr>") + 1)

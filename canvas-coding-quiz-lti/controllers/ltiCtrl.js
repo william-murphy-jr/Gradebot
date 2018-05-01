@@ -6,11 +6,10 @@ const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
 
 //Helper Functions
-
 function getAssignment(id) {
   if (fcc.fcc_index[id]) {
     const challenge = fcc.fcc_index[id]
-    // console.log('found FCC challenge',challenge)
+    console.log('found FCC challenge',challenge)
     return challenge
   }
   console.error(`unable to find assignment with id ${id}`)
@@ -25,7 +24,6 @@ function load_freecodecamp_challenges() {
       fcc_index[challenge.id] = challenge
     }
   })
-
   return {fcc_index}
 }
 
@@ -45,19 +43,17 @@ async function post(req, res) {
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
 
-      // console.log('provider good',provider)
+      console.log('provider good',provider)
 
       let assignmnet;
       // console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
       if (req.query.assignmentid) {
-        console.log("~~~~~~~", req.query, "~~~~~~~~~~`")
         assignment = getAssignment(req.query.assignmentid)
       }
       req.session.sessid = Math.floor(Math.random() * 1000000)
       .toString()
       id = req.session.sessid
-      // console.log("course_id", req.body.course_id)
       req.session.cheapsession = {}
       cheapsession[id] = {provider, assignment, req}
       req.session.cheapsession[req.session.sessid] = { provider, assignment }
