@@ -52,9 +52,9 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  // const assignment = getAssignment('587d7b7e367417b2b2512b21')
-  // console.log(assignment)
-  res.send({assignment: req.session.assignment, sessionId: req.session.sessionId })
+  const assignment = getAssignment('587d7b7e367417b2b2512b21')
+  console.log(assignment)
+  res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId })
 }
 
 function check(req, res) {
