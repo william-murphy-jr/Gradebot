@@ -9,7 +9,7 @@ const fcc = load_freecodecamp_challenges()
 function getAssignment(id) {
   if (fcc.fcc_index[id]) {
     const challenge = fcc.fcc_index[id]
-    console.log('found FCC challenge',challenge)
+    // console.log('found FCC challenge',challenge)
     return challenge
   }
   console.error(`unable to find assignment with id ${id}`)
@@ -35,7 +35,7 @@ async function post(req, res) {
   // console.log(provider.valid_request)
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
-      console.error('invalid request',err)
+      // console.error('invalid request',err)
       res.send(err + ". check your consumer key and consumer secret (and nginx https proxy header)")
     } else {
       const assignment_id = req.body.custom_canvas_assignment_id || req.body.assignmentid
@@ -44,7 +44,7 @@ async function post(req, res) {
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
 
-      console.log('provider good',provider)
+      // console.log('provider good',provider)
 
       let assignmnet;
       // console.log('provider good',provider)
@@ -60,7 +60,7 @@ async function post(req, res) {
       req.session.cheapsession[req.session.sessid] = { provider, assignment }
       cheapsession[000] = { provider }
       req.session.assignment = assignment
-      console.log(req.session.assignment)
+      // console.log(req.session.assignment)
       return res.redirect(`/`)
     }
   })
@@ -70,7 +70,7 @@ async function submit(req, res) {
   const sessid = req.session.sessid
   const data = req.session.cheapsession[sessid]
   if (data) {
-    console.log('found session',data)
+    // console.log('found session',data)
     // const origbody = data.req.body
     // use these two to check if the student already made a submission
     // get single user's submission:
@@ -93,7 +93,7 @@ async function submit(req, res) {
       return
     }
     function cb(err, result) {
-      console.log('grade submission result',err,result)
+      // console.log('grade submission result',err,result)
       return {f: "hello"}
       // redirect them to there grade
     }
