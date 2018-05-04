@@ -1,16 +1,24 @@
 const vm = require('vm')
 const expect = require('chai').expect
 const chai = require('chai')
+const plugin  = require("chai-jq");
 const config = require('../config')
 const fs =require('fs')
 const path = require('path')
-const assert = require('assert')
+const assert = chai.assert
+const Zombie= require("zombie")
+const zombie = new Zombie();
 const fcc = load_freecodecamp_challenges()
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+
+
+
 
 //Helper Functions
 function getAssignment(id) {
-  console.log(id)
-  console.log('thisis fcc',fcc)
+  // console.log(id)
+  // console.log('thisis fcc',fcc)
   if (fcc.fcc_index[id]) {
     const challenge = fcc.fcc_index[id]
     console.log('found FCC challenge',challenge)
@@ -34,17 +42,25 @@ function load_freecodecamp_challenges() {
 // Helper Functions
 let codeEval = (req, res, next) => {
   const data = req.body;
-  const code = data.code;
+  const code = data.code
+  console.log(typeof data.code)
   const tests = data.tests
   const evalOfTests = []
-  const sandbox = { assert, expect, chai, code };
+  const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`);
+  var $ = require('jquery')(window);
+  window.document.body.innerHTML += code
+  // console.log("hello",dom.window.document.querySelector("h1").textContent)
+  // const window   = dom.createWindow()
+  const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
   tests.forEach(test => {
-    let fullTest = `${data.head} \n ;\n;${code};\n \n ${data.tail} \n ${test} `
+    let fullTest = `${data.head} \n  ${code} \n ${data.tail} \n ${test} `
+    console.log("lllll",fullTest,"llllll")
     try {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
     } catch (e) {
+      console.log(e)
       evalOfTests.push(false)
     }
    })
@@ -52,9 +68,9 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  const assignment = getAssignment('587d7b7e367417b2b2512b21')
-  console.log(assignment)
-  res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId })
+  const assignment = getAssignment("56533eb9ac21ba0edf2244a9")
+  // console.log(assignment)
+  res.send({assignment: assignment, sessionId: req.session.sessionId })
 }
 
 function check(req, res) {

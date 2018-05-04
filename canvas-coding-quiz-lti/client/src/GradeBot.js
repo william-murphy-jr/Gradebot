@@ -10,6 +10,8 @@ import httpClient from './httpClient.js'
 import 'brace/mode/javascript'
 import 'brace/theme/monokai'
 
+
+
 export default class GradeBot extends Component {
 
   state = {
@@ -34,7 +36,18 @@ export default class GradeBot extends Component {
   }
 
   makeTests = () => {
-    let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    var iframe = document.createElement('iframe')
+    iframe.id = "iframe"
+    document.body.appendChild(iframe)
+
+    var doc = document.getElementById('iframe').contentWindow.document;
+    var str = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")          // Append the text to <button>
+    doc.body.innerHTML += str
+    // let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    let code = str
+
+    code.split("↵")
+    console.log(code)
     let data = { 
       code,
       head: this.state.assignment.head && this.state.assignment.head.join('\n'),
@@ -52,6 +65,8 @@ export default class GradeBot extends Component {
   async componentDidMount() {
     this._editor = this.ace.editor
     this.challengeSeed = this.state.assignment.challengeSeed
+    this._editor.session.setOption("indentedSoftWrap", false)
+
 
     await httpClient.getChallenge()
       .then(res => {
@@ -111,12 +126,14 @@ export default class GradeBot extends Component {
             theme="monokai"
             value={challengeSeed.join("\n")}
             ref={instance => { this.ace = instance; }}
+            wrapEnabled={true}
+            indentedSoftWrap={false}
             editorProps={{$blockScrolling: true}}
           />
           <div className={"submit-btns"}>
           { !passed ? 
-              [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,
-              <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
+              [<input key={"btn1"}className="btn" type="button" defaultValue="Check Code" onClick={this.makeTests} />,
+              <input key={"btn2"}className="btn reset" type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
             : 
               <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
           }
