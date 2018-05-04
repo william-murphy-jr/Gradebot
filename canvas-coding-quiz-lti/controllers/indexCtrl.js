@@ -9,11 +9,9 @@ const fcc = load_freecodecamp_challenges()
 
 //Helper Functions
 function getAssignment(id) {
-  console.log(id)
-  console.log('thisis fcc',fcc)
   if (fcc.fcc_index[id]) {
     const challenge = fcc.fcc_index[id]
-    console.log('found FCC challenge',challenge)
+    // console.log('found FCC challenge',challenge)
     return challenge
   }
   console.error(`unable to find assignment with id ${id}`)
@@ -53,7 +51,7 @@ let codeEval = (req, res, next) => {
 
 function get(req, res) {
   const assignment = getAssignment('587d7b7e367417b2b2512b21')
-  console.log(assignment)
+  // console.log(assignment)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId })
 }
 
