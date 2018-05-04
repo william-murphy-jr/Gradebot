@@ -29,7 +29,7 @@ function load_freecodecamp_challenges() {
 
 async function post(req, res) {
   /* TODO - fetch user's previous submission */
-  console.log("this is the parmas", req.params)
+  console.log("this is the parmas", req.body)
   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
   // console.log('lti launch params',req.body)
   // console.log(provider.valid_request)
