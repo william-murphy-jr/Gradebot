@@ -28,7 +28,7 @@ function getAssignment(id) {
 }
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json']
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/01-responsive-web-design/basic-html-and-html5.json', ]
   const fcc_index = {}
   fcc_includes.forEach(c => {
     const fcc_data = JSON.parse(fs.readFileSync(c))   
@@ -42,7 +42,7 @@ function load_freecodecamp_challenges() {
 // Helper Functions
 let codeEval = (req, res, next) => {
   const data = req.body;
-  const code = data.code
+  const code = `"${data.code}"`
   console.log(typeof data.code)
   const tests = data.tests
   const evalOfTests = []
@@ -54,7 +54,7 @@ let codeEval = (req, res, next) => {
   const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
   tests.forEach(test => {
-    let fullTest = `${data.head} \n  ${code} \n ${data.tail} \n ${test} `
+    let fullTest = `${data.head} \n  ${data.tail} \n ${test} `
     console.log("lllll",fullTest,"llllll")
     try {
       vm.runInContext(fullTest, sandbox);
@@ -68,7 +68,7 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  const assignment = getAssignment("56533eb9ac21ba0edf2244a9")
+  const assignment = getAssignment("bad87fee1348bd9aedf0887a")
   // console.log(assignment)
   res.send({assignment: assignment, sessionId: req.session.sessionId })
 }

@@ -16,7 +16,7 @@ function getAssignment(id) {
 }
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/08-coding-interview-questions-and-take-home-assignments/project-euler-problems.json' ]
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/01-responsive-web-design/basic-html-and-html5.json', ]
   const fcc_index = {}
   fcc_includes.forEach(c => {
     const fcc_data = JSON.parse(fs.readFileSync(c))   

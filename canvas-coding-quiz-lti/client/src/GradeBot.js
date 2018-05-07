@@ -8,6 +8,7 @@ import React, { Component } from 'react'
 import httpClient from './httpClient.js'
 
 import 'brace/mode/javascript'
+import 'brace/mode/html'
 import 'brace/theme/monokai'
 
 
@@ -122,7 +123,7 @@ export default class GradeBot extends Component {
           </div>
           <AceEditor 
             name="editor"
-            mode="javascript"
+            mode="html"
             theme="monokai"
             value={challengeSeed.join("\n")}
             ref={instance => { this.ace = instance; }}
