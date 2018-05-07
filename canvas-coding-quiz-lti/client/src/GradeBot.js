@@ -54,7 +54,7 @@ export default class GradeBot extends Component {
   async componentDidMount() {
     this._editor = this.ace.editor
     this.challengeSeed = this.state.assignment.challengeSeed
-
+    console.log("hlloe")
     await httpClient.getChallenge()
       .then(res => {
         const description = res.data.assignment.description
@@ -84,7 +84,7 @@ export default class GradeBot extends Component {
             tests,
             completed } = this.state
     let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
-    console.log(this.state.syntax)
+    // console.log(this.state.syntax)
 
     return (
       <div>
