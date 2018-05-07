@@ -36,7 +36,7 @@ let codeEval = (req, res, next) => {
   const data = req.body;
   const tests = data.tests
   const evalOfTests = []
-  const isHTML = req.session.syntax === "html"
+  const isHTML = true || req.session.syntax === "html"
   const code = isHTML ? `"${data.code}"` : data.code
   const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`)
   const $ = require('jquery')(window)
@@ -58,7 +58,7 @@ let codeEval = (req, res, next) => {
 
 function get(req, res) {
   const assignment = getAssignment('bad87fee1348bd9aedf08801')
-  assignment.syntax = req.session.syntax
+  assignment.syntax = req.session.syntax || "html"
 
   console.log(assignment)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId})
