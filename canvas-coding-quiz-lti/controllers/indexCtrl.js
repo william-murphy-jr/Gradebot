@@ -6,6 +6,8 @@ const fs =require('fs')
 const path = require('path')
 const assert = require('assert')
 const fcc = load_freecodecamp_challenges()
+const jsdom = require("jsdom")
+const { JSDOM } = jsdom
 
 //Helper Functions
 function getAssignment(id) {
@@ -32,13 +34,20 @@ function load_freecodecamp_challenges() {
 // Helper Functions
 let codeEval = (req, res, next) => {
   const data = req.body;
-  const code = data.code;
+  const code = `"${data.code}"`;
   const tests = data.tests
   const evalOfTests = []
-  const sandbox = { assert, expect, chai, code };
+  // console.log(req.session.syntax)
+  const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`);
+  const $ = require('jquery')(window);
+  window.document.body.innerHTML += code
+  const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
+
+
+  
   tests.forEach(test => {
-    let fullTest = `${data.head} \n ;\n;${code};\n \n ${data.tail} \n ${test} `
+    const fullTest = `${data.head} \n ;\n;${code};\n \n ${data.tail} \n ${test} `
     try {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
@@ -51,6 +60,7 @@ let codeEval = (req, res, next) => {
 
 function get(req, res) {
   const assignment = getAssignment('bad87fee1348bd9aedf0887a')
+  req.session.syntax  = "html"
   assignment.syntax = req.session.syntax || "html"
 
   // console.log(assignment)
