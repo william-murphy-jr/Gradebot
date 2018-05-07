@@ -18,7 +18,7 @@ function getAssignment(id) {
 }
 
 function load_freecodecamp_challenges() {
-  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json']
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/01-responsive-web-design/basic-html-and-html5.json']
   const fcc_index = {}
   fcc_includes.forEach(c => {
     const fcc_data = JSON.parse(fs.readFileSync(c))   
@@ -50,10 +50,11 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  const assignment = getAssignment('587d7b7e367417b2b2512b21')
+  const assignment = getAssignment('bad87fee1348bd9aedf0887a')
+  assignment.syntax = req.session.syntax || "html"
+
   // console.log(assignment)
-  console.log("this is the query", req.query)
-  res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId })
+  res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId})
 }
 
 function check(req, res) {

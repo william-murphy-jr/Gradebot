@@ -8,6 +8,7 @@ import React, { Component } from 'react'
 import httpClient from './httpClient.js'
 
 import 'brace/mode/javascript'
+import 'brace/mode/html'
 import 'brace/theme/monokai'
 
 export default class GradeBot extends Component {
@@ -60,6 +61,7 @@ export default class GradeBot extends Component {
         this.setState({
           assignment: res.data.assignment,
           challengeSeed: res.data.assignment.challengeSeed,
+          syntax: res.data.assignment.syntax,
           description,
           instructions,
           tests: res.data.assignment.tests,
@@ -107,7 +109,7 @@ export default class GradeBot extends Component {
           </div>
           <AceEditor 
             name="editor"
-            mode="javascript"
+            mode={this.state.syntax}
             theme="monokai"
             value={challengeSeed.join("\n")}
             ref={instance => { this.ace = instance; }}
