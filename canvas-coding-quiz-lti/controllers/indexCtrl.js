@@ -49,7 +49,7 @@ let codeEval = (req, res, next) => {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
     } catch (e) {
-      console.log(e)
+      // console.log(e)
       evalOfTests.push(false)
     }
    })
@@ -57,7 +57,7 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  const assignment = getAssignment('cf1111c1c11feddfaeb4bdef')
+  const assignment = getAssignment('bad87fee1348bd9aedf08801')
   assignment.syntax = req.session.syntax
 
   console.log(assignment)
