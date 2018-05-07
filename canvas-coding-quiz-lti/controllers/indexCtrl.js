@@ -34,24 +34,25 @@ function load_freecodecamp_challenges() {
 // Helper Functions
 let codeEval = (req, res, next) => {
   const data = req.body;
-  const code = `"${data.code}"`;
+  const code = `"${data.code}"`
+  console.log(typeof data.code)
   const tests = data.tests
   const evalOfTests = []
-  // console.log(req.session.syntax)
   const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`);
-  const $ = require('jquery')(window);
+  var $ = require('jquery')(window);
   window.document.body.innerHTML += code
+  // console.log("hello",dom.window.document.querySelector("h1").textContent)
+  // const window   = dom.createWindow()
   const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
-
-
-  
   tests.forEach(test => {
-    const fullTest = `${data.head} \n ;\n;${code};\n \n ${data.tail} \n ${test} `
+    let fullTest = `${data.head} \n  ${data.tail} \n ${test} `
+    console.log("lllll",fullTest,"llllll")
     try {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
     } catch (e) {
+      console.log(e)
       evalOfTests.push(false)
     }
    })
