@@ -60,7 +60,7 @@ function get(req, res) {
   const assignment = getAssignment('bad87fee1348bd9aedf08801')
   assignment.syntax = req.session.syntax || "html"
 
-  console.log(assignment)
+  console.log(assignment.syntax)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId})
 }
 
