@@ -55,6 +55,7 @@ export default class GradeBot extends Component {
     this.challengeSeed = this.state.assignment.challengeSeed
     await httpClient.getChallenge()
       .then(res => {
+        console.log(res.data)
         const description = res.data.assignment.description
         const instructions = description.splice(res.data.assignment.description.indexOf("<hr>") + 1)
         this.setState({
