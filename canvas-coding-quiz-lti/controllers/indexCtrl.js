@@ -4,7 +4,7 @@ const chai = require('chai')
 const config = require('../config')
 const fs =require('fs')
 const path = require('path')
-const assert = require('assert')
+const assert = chai.assert
 const fcc = load_freecodecamp_challenges()
 const jsdom = require("jsdom")
 const { JSDOM } = jsdom
@@ -34,20 +34,17 @@ function load_freecodecamp_challenges() {
 // Helper Functions
 let codeEval = (req, res, next) => {
   const data = req.body;
-  const code = `"${data.code}"`
-  console.log(typeof data.code)
   const tests = data.tests
   const evalOfTests = []
-  const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`);
-  var $ = require('jquery')(window);
+  const isHTML = req.session.syntax === "html"
+  const code = isHTML ? `"${data.code}"` : data.code
+  const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`)
+  const $ = require('jquery')(window)
   window.document.body.innerHTML += code
-  // console.log("hello",dom.window.document.querySelector("h1").textContent)
-  // const window   = dom.createWindow()
   const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
   tests.forEach(test => {
-    let fullTest = `${data.head} \n  ${data.tail} \n ${test} `
-    console.log("lllll",fullTest,"llllll")
+    let fullTest = isHTML ? `${data.head} \n ${data.tail} \n ${test} ` : `${data.head} \n  \n ${code} \n ${data.tail} \n ${test} `
     try {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
@@ -60,9 +57,9 @@ let codeEval = (req, res, next) => {
 }
 
 function get(req, res) {
-  const assignment = getAssignment('bad87fee1348bd9aedf0887a')
+  const assignment = getAssignment('cf1111c1c11feddfaeb4bdef')
   req.session.syntax  = "html"
-  assignment.syntax = req.session.syntax || "html"
+  assignment.syntax = req.session.syntax
 
   // console.log(assignment)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId})
