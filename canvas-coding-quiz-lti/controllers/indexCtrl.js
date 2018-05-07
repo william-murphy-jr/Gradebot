@@ -58,10 +58,9 @@ let codeEval = (req, res, next) => {
 
 function get(req, res) {
   const assignment = getAssignment('cf1111c1c11feddfaeb4bdef')
-  req.session.syntax  = "html"
   assignment.syntax = req.session.syntax
 
-  // console.log(assignment)
+  console.log(assignment)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId})
 }
 
