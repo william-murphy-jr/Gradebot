@@ -52,6 +52,7 @@ let codeEval = (req, res, next) => {
 function get(req, res) {
   const assignment = getAssignment('587d7b7e367417b2b2512b21')
   // console.log(assignment)
+  console.log("this is the query", req.query)
   res.send({assignment: req.session.assignment || assignment, sessionId: req.session.sessionId })
 }
 
