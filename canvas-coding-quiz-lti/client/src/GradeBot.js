@@ -111,7 +111,7 @@ export default class GradeBot extends Component {
           </div>
           <AceEditor 
             name="editor"
-            mode={this.state.syntax}
+            mode={"html"}
             theme="monokai"
             value={challengeSeed.join("\n")}
             ref={instance => { this.ace = instance; }}
