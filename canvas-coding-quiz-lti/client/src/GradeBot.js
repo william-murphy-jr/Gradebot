@@ -53,6 +53,7 @@ export default class GradeBot extends Component {
 
   async componentDidMount() {
     this._editor = this.ace.editor
+    this._editor.session.setOption("indentedSoftWrap", false)
     this.challengeSeed = this.state.assignment.challengeSeed
     await httpClient.getChallenge()
       .then(res => {
