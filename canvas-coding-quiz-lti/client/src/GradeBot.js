@@ -20,6 +20,7 @@ export default class GradeBot extends Component {
     instructions: [],
     tests: [],
     passing:[],
+    syntax: 'javascript',
     completed: false
   }
 
