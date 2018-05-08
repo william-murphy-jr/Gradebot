@@ -84,7 +84,6 @@ export default class GradeBot extends Component {
             tests,
             completed } = this.state
     let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
-    console.log(this.state.syntax)
 
     return (
       <div>
@@ -109,14 +108,17 @@ export default class GradeBot extends Component {
               <TestSuite passing={this.state.passing}tests={tests}/>
             </div>
           </div>
-          <AceEditor 
-            name="editor"
-            mode={this.state.syntax}
-            theme="monokai"
-            value={challengeSeed.join("\n")}
-            ref={instance => { this.ace = instance; }}
-            editorProps={{$blockScrolling: true}}
-          />
+          <div class="editor-div">
+            <AceEditor 
+              name="editor"
+              mode={this.state.syntax}
+              theme="monokai"
+              value={challengeSeed.join("\n")}
+              ref={instance => { this.ace = instance; }}
+              editorProps={{$blockScrolling: true}}
+            />
+            <iframe></iframe>
+          </div>
           <div className={"submit-btns"}>
           { !passed ? 
               [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,

@@ -27,7 +27,11 @@
   width: 40%;
 }
 
-#editor {
+#editor, iframe {
   margin-top: 50px;
+}
+
+.editor-div {
+  display: flex;
 }
 
