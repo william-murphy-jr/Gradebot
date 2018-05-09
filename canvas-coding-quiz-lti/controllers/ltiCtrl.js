@@ -116,6 +116,7 @@ async function submit(req, res) {
 }
 
 function get (req,res) {
+  console.log("here are the params", req.params)
   res.redirect('/')
 }
 
