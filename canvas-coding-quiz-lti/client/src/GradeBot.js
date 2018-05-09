@@ -36,8 +36,10 @@ export default class GradeBot extends Component {
   }
 
   makeTests = () => {
-    let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
-    let data = { 
+    const iFrameDoc = document.getElementById('iframe').contentWindow.document
+    const code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    iFrameDoc.body.innerHTML = code
+    const data = { 
       code,
       head: this.state.assignment.head && this.state.assignment.head.join('\n'),
       tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
@@ -55,6 +57,7 @@ export default class GradeBot extends Component {
     this._editor = this.ace.editor
     this._editor.session.setOption("indentedSoftWrap", false)
     this.challengeSeed = this.state.assignment.challengeSeed
+  
     await httpClient.getChallenge()
       .then(res => {
         console.log(res.data)
@@ -133,7 +136,7 @@ export default class GradeBot extends Component {
             <div class="iphone" style={{display: this.state.syntax !== "html" ? 'none' : 'flex'}}>
               <div>
                 <img src="./iphone.png" />  
-                <iframe></iframe>         
+                <iframe id="iframe"></iframe>         
               </div>
             </div>
             

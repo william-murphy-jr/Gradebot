@@ -49,7 +49,7 @@ let codeEval = (req, res, next) => {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)
     } catch (e) {
-      // console.log(e)
+      console.log(e)
       evalOfTests.push(false)
     }
    })
