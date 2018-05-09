@@ -130,7 +130,7 @@ export default class GradeBot extends Component {
                 }
               </div>
             </div>
-            <div class="iphone">
+            <div class="iphone" style={{display: this.state.syntax !== "html" ? 'none' : 'flex'}}>
               <div>
                 <img src="./iphone.png" />  
                 <iframe></iframe>         
