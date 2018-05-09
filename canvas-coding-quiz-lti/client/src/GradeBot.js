@@ -110,24 +110,35 @@ export default class GradeBot extends Component {
             </div>
           </div>
           <div class="editor-div">
-            <AceEditor 
-              name="editor"
-              mode={this.state.syntax}
-              theme="monokai"
-              value={challengeSeed.join("\n")}
-              ref={instance => { this.ace = instance; }}
-              editorProps={{$blockScrolling: true}}
-            />
-            <iframe></iframe>
+            <div>
+              <AceEditor 
+                name="editor"
+                mode={this.state.syntax}
+                theme="monokai"
+                value={challengeSeed.join("\n")}
+                ref={instance => { this.ace = instance; }}
+                wrapEnabled={true}
+                indentedSoftWrap={false}
+                editorProps={{$blockScrolling: true}}
+              />
+              <div className={"submit-btns"}>
+                { !passed ? 
+                    [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,
+                    <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
+                  : 
+                    <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
+                }
+              </div>
+            </div>
+            <div class="iphone">
+              <div>
+                <img src="./iphone.png" />  
+                <iframe></iframe>         
+              </div>
+            </div>
+            
           </div>
-          <div className={"submit-btns"}>
-          { !passed ? 
-              [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,
-              <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
-            : 
-              <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
-          }
-          </div>
+
         </div>
         }
       </div>
