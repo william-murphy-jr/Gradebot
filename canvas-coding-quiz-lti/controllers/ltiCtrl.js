@@ -64,7 +64,8 @@ async function post(req, res) {
       req.session.assignment.syntax = req.query.syntax
       req.session.syntax = req.query.syntax
       // console.log(req.session.assignment)
-      return res.redirect(`/`)
+      return res.redirect(`/lti/${assignment_id}/${id}`)
+      // return res.redirect(`/ `)
     }
   })
 }
