@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "dependencies": {
+    "@freecodecamp/curriculum": "^3.1.2",
     "axios": "^0.17.1",
     "body-parser": "^1.17.2",
     "chai": "^4.1.2",
@@ -15,6 +16,7 @@
     "ims-lti": "^3.0.2",
     "jquery": "^3.3.1",
     "jsdom": "^11.10.0",
+    "lodash": "^4.17.10",
     "mocha-jsdom": "^1.1.0",
     "morgan": "^1.9.0",
     "node-fetch": "^2.1.1",

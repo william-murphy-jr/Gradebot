@@ -1,13 +1,8 @@
 const vm = require('vm')
 const expect = require('chai').expect
 const chai = require('chai')
-const plugin  = require("chai-jq");
-const config = require('../config')
 const fs =require('fs')
-const path = require('path')
 const assert = chai.assert
-const Zombie= require("zombie")
-const zombie = new Zombie();
 const fcc = load_freecodecamp_challenges()
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -49,13 +44,11 @@ let codeEval = (req, res, next) => {
   const { window } = new JSDOM(`<html><body>${code.toString()}</body></html>`);
   var $ = require('jquery')(window);
   window.document.body.innerHTML += code
-  // console.log("hello",dom.window.document.querySelector("h1").textContent)
-  // const window   = dom.createWindow()
   const sandbox = { assert, expect, chai, window, $, code};
   vm.createContext(sandbox);
   tests.forEach(test => {
     let fullTest = `${data.head} \n  ${data.tail} \n ${test} `
-    console.log("lllll",fullTest,"llllll")
+
     try {
       vm.runInContext(fullTest, sandbox);
       evalOfTests.push(true)

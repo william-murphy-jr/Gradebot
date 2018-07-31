@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const logger = require('morgan')
 const canvas = require('./canvas-api')
 const path = require('path')
-const session = require("express-session")
+// const session = require("express-session")
 const PORT = 3030
 
 const indexRoute = require('./routes/index')
@@ -15,19 +15,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json()) // handle json data
 app.use(bodyParser.urlencoded({ extended: true }))
 app.enable('trust proxy') // this lets req.proto == 'https'
-app.use(session({
-  secret: "TKRv0IJs=HYqrvagQ#&!F!%V]Ww/4KiVs$s,<<MX",
-  resave: true,
-  saveUninitialized: true
-}));
+// app.use(session({
+//   secret: "TKRv0IJs=HYqrvagQ#&!F!%V]Ww/4KiVs$s,<<MX",
+//   resave: true,
+//   saveUninitialized: true
+// }));
 app.use(express.static(path.join(__dirname, "/client/build")));
 
-app.use('/', indexRoute)
 app.use('/lti', ltiRoute)
-
-app.get('*', (req, res) => {
-  res.send('./client/public/index.html')
-})
 
 app.listen(PORT, function (err) {
   console.log(err || `ltitool on ${PORT}`)

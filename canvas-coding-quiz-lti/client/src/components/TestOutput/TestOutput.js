@@ -11,7 +11,7 @@ export default class TestOutput  extends Component {
   };
   
   makeMessage = (test) => {
-    const splitArr = this.props.test.split("'message:");
+    const splitArr = this.props.test.text;
     return splitArr[1].replace("');", "")
   }
   
@@ -21,7 +21,7 @@ export default class TestOutput  extends Component {
     return (
       <div className="test-description">
         <span> {passing[index] ? "✅" : "❌" }</span>
-        <p key={index} dangerouslySetInnerHTML={{ __html: this.makeMessage(test) }}></p>
+        <p key={index} dangerouslySetInnerHTML={{ __html: this.props.test.text }}></p>
       </div>
     )
   }
