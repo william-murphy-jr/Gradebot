@@ -21,7 +21,7 @@
     "serve-favicon": "^2.4.3"
   },
   "devDependencies": {
-    "react-scripts": "0.9.5"
+    "react-scripts": "^2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
