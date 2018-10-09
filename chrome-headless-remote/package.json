@@ -9,8 +9,8 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "chrome-launcher": "^0.3.2",
-    "chrome-remote-interface": "^0.24.2",
+    "chrome-remote-interface": "^0.26.1",
     "express": "^4.15.3",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.18.4"
   }
 }
