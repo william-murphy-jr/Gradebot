@@ -5,23 +5,23 @@
   "main": "server.js",
   "dependencies": {
     "axios": "^0.17.1",
-    "body-parser": "^1.17.2",
-    "chai": "^4.1.2",
-    "ejs": "^2.5.7",
-    "esprima": "^4.0.0",
-    "express": "^4.15.3",
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "ejs": "^2.6.1",
+    "esprima": "^4.0.1",
+    "express": "^4.16.4",
     "ims-lti": "^3.0.2",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "node-fetch": "^1.7.2",
-    "nodemon": "^1.18.4",
+    "nodemon": "^1.19.0",
     "react": "^15.5.4",
-    "react-ace": "^5.9.0",
+    "react-ace": "^5.10.0",
     "react-dom": "^15.5.4",
-    "react-router-dom": "^4.1.1",
-    "serve-favicon": "^2.4.3"
+    "react-router-dom": "^4.3.1",
+    "serve-favicon": "^2.5.0"
   },
   "devDependencies": {
-    "react-scripts": "^2.0.4"
+    "react-scripts": "^2.1.8"
   },
   "scripts": {
     "start": "react-scripts start",

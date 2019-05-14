@@ -2,8 +2,6 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const lti = require('ims-lti')
-const ejs = require('ejs')
-const fetch = require('node-fetch')
 const fs = require('fs')
 const canvas = require('./canvas-api')
 const config = require('./config')
@@ -12,6 +10,10 @@ const path = require('path')
 const cheapsession = {}
 const fcc = load_freecodecamp_challenges()
 
+function load_freecodecamp_challenges() {
+  const fcc_includes = [ 'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/javascript-algorithms-and-data-structures-projects.json','freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json', 'freeCodeCamp/seed/challenges/03-front-end-libraries/bootstrap.json', 'freeCodeCamp/seed/challenges/03-front-end-libraries/jquery.json', 'freeCodeCamp/seed/challenges/01-responsive-web-design.json',
+  'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/object-oriented-programming.json'
+  ]
 function load_freecodecamp_challenges() {
   const fcc_includes = [ 'freecodecamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json' ]
   const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
@@ -79,7 +81,7 @@ app.post('/lti-grade', bodyParser.json(), async (req, res) => {
       res.send({error:'incorrect solution.'})
       //provider.outcome_service.send_replace_result_with_text( 0, code, cb )
     }
-    
+
   } else {
     res.send({error:'session not found. try reloading'})
   }
@@ -92,7 +94,7 @@ app.get('/lti', async (req, res) => {
 app.post('/lti', async (req, res) => {
     /* TODO - fetch user's previous submission */
     console.log('/lti')
-  
+
   const provider = new lti.Provider( config.consumer_key,  config.consumer_secret )
   // console.log('lti launch params',req.body)
   provider.valid_request(req, async (err, isValid) => {
@@ -104,10 +106,10 @@ app.post('/lti', async (req, res) => {
       const assignment_id = req.body.custom_canvas_assignment_id
       const course_id = req.body.custom_canvas_course_id
       const user_id = req.body.user_id
-      
+
       const submitted = await canvas.req(`/courses/${course_id}/assignments/${assignment_id}/submissions/${user_id}`)
       const assignments_link = `/courses/${course_id}/assignments`
-      
+
       console.log('provider good',provider)
       // if external tool is an assignment, then it will have outcome_service_url
       var assignment
