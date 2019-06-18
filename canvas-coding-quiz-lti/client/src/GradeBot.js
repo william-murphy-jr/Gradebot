@@ -4,6 +4,7 @@ import ChallengeDescription from './components/ChallengeDescription/ChallengeDes
 import TestSuite from './components/TestSuite/TestSuite'
 import Completed from './components/Completed/Completed'
 import AceEditor from 'react-ace'
+import MonacoEditor from 'react-monaco-editor';
 import React, { Component } from 'react'
 import httpClient from './httpClient.js'
 import iPhone from './iphone.png'
@@ -105,9 +106,10 @@ export default class GradeBot extends Component {
       .then(res => {
         const description = res.data.assignment.description
         const instructions = description.splice(res.data.assignment.description.indexOf("<hr>") + 1)
+        const whichIndex = 'indexhtml'
         this.setState({
           assignment: res.data.assignment,
-          challengeSeed: res.data.assignment.files.indexjs.contents,
+          challengeSeed: res.data.assignment.files[whichIndex].contents,
           syntax: res.data.assignment.syntax,
           description,
           instructions,
@@ -148,6 +150,13 @@ export default class GradeBot extends Component {
       <div>
         {/* {completed ? < Completed title={assignment.title}/> : */}
         <div className="test-iframe"></div>
+        <MonacoEditor
+        width="800"
+        height="600"
+        language="javascript"
+        theme="vs-dark"
+        value={'hello'}
+        />
         <div>
           <div>
             <Completed 

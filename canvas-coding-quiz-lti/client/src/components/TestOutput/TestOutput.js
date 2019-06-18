@@ -1,29 +1,10 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react'
 import './TestOutput.css'
 
-export default class TestOutput  extends Component {
-  
-  static propTypes = {
-    index: PropTypes.number,
-    passing: PropTypes.array.isRequired,
-    test: PropTypes.string.isRequired
-  };
-  
-  makeMessage = (test) => {
-    const splitArr = this.props.test.text;
-    return splitArr[1].replace("');", "")
-  }
-  
-  render() {
-    const { index, test, passing} = this.props
+const TestOutput = ({index, test, passing}) =>
+  <div className='test-description'>
+    <span> {passing[index] ? '✅' : '❌' }</span>
+    <p key={index} dangerouslySetInnerHTML={{ __html: test.text }} />
+  </div>
 
-    return (
-      <div className="test-description">
-        <span> {passing[index] ? "✅" : "❌" }</span>
-        <p key={index} dangerouslySetInnerHTML={{ __html: this.props.test.text }}></p>
-      </div>
-    )
-  }
-}
-
+export default TestOutput

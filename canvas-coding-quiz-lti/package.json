@@ -6,6 +6,7 @@
   "dependencies": {
     "@freecodecamp/curriculum": "^3.1.2",
     "axios": "^0.17.1",
+    "babel-eslint": "^8.2.6",
     "body-parser": "^1.17.2",
     "chai": "^4.1.2",
     "chai-jq": "0.0.9",
@@ -21,7 +22,9 @@
     "morgan": "^1.9.0",
     "node-fetch": "^2.1.1",
     "nodemon": "^1.11.0",
-    "react-ace": "^5.9.0"
+    "react-ace": "^5.9.0",
+    "react-monaco-editor": "^0.17.2",
+    "standard": "^11.0.1"
   },
   "scripts": {
     "start": "nodemon"

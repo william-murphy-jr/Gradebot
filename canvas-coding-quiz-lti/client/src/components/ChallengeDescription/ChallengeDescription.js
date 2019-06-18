@@ -1,11 +1,9 @@
 import React from 'react'
 import './ChallengeDescription.css'
 
-
-const ChallengeDescription = (props) => {
-  const { index, description } = props
-  return ( 
-    <p key={index} dangerouslySetInnerHTML={{ __html: description }}></p>
+const ChallengeDescription = ({index, description}) => {
+  return (
+    <p key={index} dangerouslySetInnerHTML={{ __html: description }} />
   )
 }
 

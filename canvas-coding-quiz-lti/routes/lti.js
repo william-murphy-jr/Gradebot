@@ -8,10 +8,3 @@ router.get('/getstate/:sessionId', ltiCtrl.getState)
 router.get('/:challengeId/:sessionId', ltiCtrl.get)
 
 module.exports = router
-
-
-
-
-
-
-
