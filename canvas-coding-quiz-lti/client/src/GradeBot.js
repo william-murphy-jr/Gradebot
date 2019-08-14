@@ -12,6 +12,7 @@ import 'brace/mode/javascript'
 import 'brace/mode/html'
 import 'brace/theme/monokai'
 
+
 export default class GradeBot extends Component {
 
   state = {
@@ -27,7 +28,7 @@ export default class GradeBot extends Component {
 
   submit_solution = async () =>{
     const body = {
-      code: this._editor.getValue(),
+      code: eval(this._editor.getValue()),
       assignment: this.state.assignment
     }
     httpClient.grade(body)
@@ -36,30 +37,58 @@ export default class GradeBot extends Component {
     })
   }
 
-  makeTests = () => {
+
+addJquery = () => {
+  var iFrameHead = document.getElementById('iframe').contentWindow.document.head
+  var jQuery = document.createElement('script');
+  jQuery.type = 'text/javascript';
+  jQuery.src = "https://code.jquery.com/jquery-3.4.1.min.js";  
+  iFrameHead.appendChild(jQuery);  
+}
+
+async injectJS(code) {
+  var iFrameHead = document.getElementById('iframe').contentWindow.document.head    
+  var myscript = document.createElement('script');
+  myscript.innerHTML = code
+  await iFrameHead.appendChild(myscript);
+  return document.getElementById('iframe').contentWindow.document
+}
+
+
+  makeTests = async () => {
     const assignmentId = this.state.assignment.id
     const iFrameDoc = document.getElementById('iframe').contentWindow.document
-    const code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
     iFrameDoc.body.innerHTML = code
-    const data = { 
-      code,
-      head: this.state.assignment.head && this.state.assignment.head.join('\n'),
-      tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
-      tests: this.state.assignment.tests,
-      syntax: this.state.syntax
-    }
-
-    httpClient.testCode(data, assignmentId)
-      .then(res => this.setState({ 
+    const script= code.substring((code.indexOf('<script>') + 8),(code.indexOf('</script>')))
+    const scriptedCode = await this.injectJS(script)
+    // code = scriptedCode.body.innerHTML
+    setTimeout(() => {
+      const data = { 
+        code,
+        head: this.state.assignment.head && this.state.assignment.head.join('\n'),
+        tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
+        tests: this.state.assignment.tests,
+        syntax: this.state.syntax,
+        html: scriptedCode.body.innerHTML
+      }
+      httpClient.testCode(data, assignmentId)
+      .then(res => {
+        this.setState({ 
         passing: res.data,
         challengeSeed:[code]
-      }))
+        })})
+    }, 100)
+
+    
+
   }
 
   async componentDidMount() {
     this._editor = this.ace.editor
     this._editor.session.setOption("indentedSoftWrap", false)
     this.challengeSeed = this.state.assignment.challengeSeed
+    
   
     await httpClient.getChallenge()
       .then(res => {
@@ -69,13 +98,14 @@ export default class GradeBot extends Component {
         this.setState({
           assignment: res.data.assignment,
           challengeSeed: res.data.assignment.challengeSeed,
-          syntax: res.data.assignment.syntax,
+          syntax: res.data.assignment.syntax || 'html',
           description,
           instructions,
           tests: res.data.assignment.tests,
         })
       })
     this.makeTests()
+    this.addJquery()
   }
 
   onReset = () => {
