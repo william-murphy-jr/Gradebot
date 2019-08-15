@@ -115,11 +115,13 @@ async injectJS(code) {
   }
 
   render() {
-    const { assignment, 
-            description, 
-            challengeSeed, 
-            tests,
-            completed } = this.state
+    const { 
+      assignment, 
+      description, 
+      challengeSeed, 
+      tests,
+      completed 
+    } = this.state
     let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
     return (
       <div>
