@@ -13,6 +13,7 @@ import 'brace/mode/javascript'
 import 'brace/mode/html'
 import 'brace/theme/monokai'
 
+
 export default class GradeBot extends Component {
 
   state = {
@@ -23,7 +24,6 @@ export default class GradeBot extends Component {
     tests: [],
     passing:[],
     syntax: 'javascript',
-    show: false,
     completed: false
   }
 
@@ -47,7 +47,7 @@ export default class GradeBot extends Component {
 
   submit_solution = () =>{
     const body = {
-      code: this._editor.getValue(),
+      code: eval(this._editor.getValue()),
       assignment: this.state.assignment
     }
     httpClient.grade(body, this.sessionId).then(res => {
@@ -57,60 +57,69 @@ export default class GradeBot extends Component {
     })
   }
 
-  async submit_code(user_code, assignment) {
-    // client side only checking, in a web worker
-    var result = await this.runTestIframe(user_code, assignment)
-    console.log('submit code final result',result)
-    return result
-  }
+
+addJquery = () => {
+  var iFrameHead = document.getElementById('iframe').contentWindow.document.head
+  var jQuery = document.createElement('script');
+  jQuery.type = 'text/javascript';
+  jQuery.src = "https://code.jquery.com/jquery-3.4.1.min.js";  
+  iFrameHead.appendChild(jQuery);  
+}
+
+async injectJS(code) {
+  var iFrameHead = document.getElementById('iframe').contentWindow.document.head    
+  var myscript = document.createElement('script');
+  myscript.innerHTML = code
+  await iFrameHead.appendChild(myscript);
+  return document.getElementById('iframe').contentWindow.document
+}
+
 
   makeTests = async () => {
     const assignmentId = this.state.assignment.id
     const iFrameDoc = document.getElementById('iframe').contentWindow.document
-    const code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
-    iFrameDoc.body.innerHTML =  code
-    const data = { 
-      code,
-      head: this.state.assignment.head && this.state.assignment.head.join('\n'),
-      tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
-      tests: this.state.assignment.tests,
-      syntax: this.state.syntax
-    }
-
-    if(this.state.syntax === "html") {
-      await this.runTestIframe(code, this.state.assignment)
-      .then(res => this.setState({
-        passing: res.result.tests,
-        challengeSeed: [code]
-      }))
-    } else {
-        await httpClient.testCode(data, assignmentId)
-        .then(res => this.setState({ 
+    let code = this._editor ? this._editor.getValue() : this.state.challengeSeed.join("\n")
+    iFrameDoc.body.innerHTML = code
+    const script= code.substring((code.indexOf('<script>') + 8),(code.indexOf('</script>')))
+    const scriptedCode = await this.injectJS(script)
+    // code = scriptedCode.body.innerHTML
+    setTimeout(() => {
+      const data = { 
+        code,
+        head: this.state.assignment.head && this.state.assignment.head.join('\n'),
+        tail: this.state.assignment.tail && this.state.assignment.tail.join('\n'),
+        tests: this.state.assignment.tests,
+        syntax: this.state.syntax,
+        html: scriptedCode.body.innerHTML
+      }
+      httpClient.testCode(data, assignmentId)
+      .then(res => {
+        this.setState({ 
         passing: res.data,
-        challengeSeed:[code],
-    }))
-    }
+        challengeSeed:[code]
+        })})
+    }, 100)
 
-    !this.state.passing.includes(false) && document.body.classList.toggle('stop-scroll') && this.setState({ show: true })
+    
+
   }
 
   async componentDidMount() {
     this._editor = this.ace.editor
     this._editor.session.setOption("indentedSoftWrap", false)
-    const params = window.location.pathname.split("/")
-    this.sessionId = params[3]
-    addBootstrap()
-    addjQuery()
-
-    await httpClient.getChallenge(this.sessionId)
+    this.challengeSeed = this.state.assignment.challengeSeed
+    
+  
+    await httpClient.getChallenge()
       .then(res => {
+        console.log(res.data)
         const description = res.data.assignment.description
         const instructions = description.splice(res.data.assignment.description.indexOf("<hr>") + 1)
         const whichIndex = 'indexhtml'
         this.setState({
           assignment: res.data.assignment,
-          challengeSeed: res.data.assignment.files[whichIndex].contents,
-          syntax: res.data.assignment.syntax,
+          challengeSeed: res.data.assignment.challengeSeed,
+          syntax: res.data.assignment.syntax || 'html',
           description,
           instructions,
           tests: res.data.assignment.tests
@@ -118,6 +127,7 @@ export default class GradeBot extends Component {
       })
     this.challengeSeed = this.state.assignment.challengeSeed
     this.makeTests()
+    this.addJquery()
   }
 
   onReset = () => {
@@ -140,12 +150,14 @@ export default class GradeBot extends Component {
   }
 
   render() {
-    const { assignment, 
-            description, 
-            challengeSeed, 
-            tests,
-            completed } = this.state
-    // let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
+    const { 
+      assignment, 
+      description, 
+      challengeSeed, 
+      tests,
+      completed 
+    } = this.state
+    let passed = tests.length === this.state.passing.length && !this.state.passing.includes(false)
     return (
       <div>
         {/* {completed ? < Completed title={assignment.title}/> : */}
@@ -186,8 +198,8 @@ export default class GradeBot extends Component {
               <TestSuite passing={this.state.passing}tests={tests}/>
             </div>
           </div>
-          <div className="editor-div">
-            <div className="ace-editor-div">
+          <div class="editor-div">
+            <div>
               <AceEditor 
                 name="editor"
                 mode={this.state.syntax}
@@ -197,14 +209,17 @@ export default class GradeBot extends Component {
                 wrapEnabled={true}
                 indentedSoftWrap={false}
                 editorProps={{$blockScrolling: true}}
-                onChange={this.onChange}
               />
               <div className={"submit-btns"}>
-                <input key={"btn1"}className={"btn"} type="button" defaultValue="Run Tests" onClick={this.makeTests} />
-                <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset code" onClick={this.onReset} />
+                { !passed ? 
+                    [<input key={"btn1"}className={"btn"} type="button" defaultValue="Check Code" onClick={this.makeTests} />,
+                    <input key={"btn2"}className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset} />]
+                  : 
+                    <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.submit_solution}/>  
+                }
               </div>
             </div>
-            <div class="iphone" style={{display: this.state.syntax !== "html" ? 'none' : 'block'}}>
+            <div class="iphone" style={{display: this.state.syntax !== "html" ? 'none' : 'flex'}}>
               <div>
                 <img src={iPhone} />  
                 <iframe id="iframe"></iframe>         

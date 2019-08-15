@@ -1,31 +1,30 @@
-function runTestIframe(text, challenge) {
-  return new Promise( res => {
+function runTestIframe (text, challenge) {
+  return new Promise(resolve => {
     var iframe = document.createElement('iframe')
     iframe.src = 'iframe-grader/testframe.html'
-    iframe.style.display='none'
+    iframe.style.display = 'none'
     document.querySelector('.test-iframe').innerHTML = ''
     document.querySelector('.test-iframe').appendChild(iframe)
-    iframe.contentWindow.addEventListener('message', function(e) {
+    iframe.contentWindow.addEventListener('message', function (e) {
       if (e.data.loaded) {
-        iframe.contentWindow.postMessage({command:'runTest',text:text,challenge:challenge},'*')
+        iframe.contentWindow.postMessage({command: 'runTest', text: text, challenge: challenge}, '*')
       } else {
         if (e.data.command) { return }
-        console.log('iframe returns message',e.data)
+        console.log('iframe returns message', e.data)
         res(e.data)
       }
     }, false)
   })
 }
 
-
-async function submit_code(user_code, assignment) {
+async function submit_code (user_code, assignment) {
   // client side only checking, in a web worker
   var result = await runTestIframe(user_code, assignment)
-  console.log('submit code final result',result)
+  console.log('submit code final result', result)
   return result
 }
 
-async function submit_solution(user_code, state, assignment) {
+async function submit_solution (user_code, state, assignment) {
   /* submit user's code solution to be graded */
   const API_ENDPOINT = '/lti-grade'
   const body = {
@@ -35,65 +34,63 @@ async function submit_solution(user_code, state, assignment) {
     session: sessid
   }
   const opts = {
-    method:'post',
-    headers: { "Content-Type": "application/json; charset=utf-8" },
+    method: 'post',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
     body: JSON.stringify(body)
   }
   const result = await fetch(API_ENDPOINT, opts)
   const j = await result.json()
-  console.log('submit solution result',result,j)
+  console.log('submit solution result', result, j)
   return j
 }
 
-async function submit_code_server(user_code, test_user_code) {
+async function submit_code_server (user_code, test_user_code) {
   // cheat-free version (not working yet)
   const API_ENDPOINT = '/api/grade'
   const body = {
-    code:user_code,
-    tests:test_user_code,
-    debugLevel:0
+    code: user_code,
+    tests: test_user_code,
+    debugLevel: 0
   }
   const opts = {
-    method:'post',
-    headers: { "Content-Type": "application/json; charset=utf-8" },
+    method: 'post',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
     body: JSON.stringify(body)
   }
   const result = await fetch(API_ENDPOINT, opts)
   const j = await result.json()
-  console.log('api result',result,j)
+  console.log('api result', result, j)
   return j
 }
 
-
 class CodeComponent extends React.Component {
-  async onSubmit() {
+  async onSubmit () {
     console.log('submit code to grader')
     var result = await submit_solution(this._editor.getValue(), this.state, assignment)
     if (result.success) {
-      this.setState({completed:true})
+      this.setState({completed: true})
     } else {
-      this.setState({submission:result})
+      this.setState({submission: result})
     }
   }
-  async onReset() {
-    this._editor.setValue(assignment.challengeSeed.join('\n'),-1)
-
+  async onReset () {
+    this._editor.setValue(assignment.challengeSeed.join('\n'), -1)
   }
-  async onCheck() {
-    console.log('submit/check',this)
-    this.setState({submitting:true})
+  async onCheck () {
+    console.log('submit/check', this)
+    this.setState({submitting: true})
     const user_code = this._editor.getValue()
     console.log(user_code)
     const test_user_code = assignment.tests
     const sub_result = await submit_code(user_code, assignment)
-    this.setState({submitting:false, checked:sub_result})
+    this.setState({submitting: false, checked: sub_result})
   }
-  onChange() {
+  onChange () {
   }
-  constructor() {
+  constructor () {
     super()
   }
-  resetSolution() {
+  resetSolution () {
     var t = ''
 
     if (initstate.submitted && initstate.submitted.body) {
@@ -103,26 +100,26 @@ class CodeComponent extends React.Component {
         t += line + '\n'
       }
     }
-    //document.getElementById('editor').textContent = t
-    this._editor.setValue(t,-1)
+    // document.getElementById('editor').textContent = t
+    this._editor.setValue(t, -1)
   }
-  componentDidMount() {
+  componentDidMount () {
     this.setState(initstate)
-    var editor = ace.edit("editor");
+    var editor = ace.edit('editor')
     this._editor = editor
     this.resetSolution()
-    //editor.setTheme("ace/theme/twilight");
-    editor.session.setMode("ace/mode/javascript");
+    // editor.setTheme("ace/theme/twilight");
+    editor.session.setMode('ace/mode/javascript')
   }
-  render() {
+  render () {
     var msg = ''
-    var submit = false;
+    var submit = false
 
     if (this.state) {
       if (this.state.completed) {
         return (<div>Great work! All done with this assignment!</div>)
       }
-      
+
       if (this.state.submitted && this.state.submitted.grade) {
         msg = `You submitted this solution at ${this.state.submitted.submitted_at}`
       }
@@ -134,47 +131,46 @@ class CodeComponent extends React.Component {
       if (this.state.checked && this.state.checked.result) {
         if (this.state.checked.result.message) msg = this.state.checked.result.message
         if (this.state.checked.result.passed) {
-          submit = true;
+          submit = true
           msg = 'Great! Your code passed all tests.'
         }
-      }  
+      }
     }
 
-    let button = null;
+    let button = null
     if (!submit) {
-      button = [<input className={"btn"} type="button" defaultValue="Check Code" onClick={this.onCheck.bind(this)} />,
-      <input className={"btn reset"} type="button" defaultValue="Reset Solution" onClick={this.onReset.bind(this)} />]
+      button = [<input className={'btn'} type='button' defaultValue='Check Code' onClick={this.onCheck.bind(this)} />,
+        <input className={'btn reset'} type='button' defaultValue='Reset Solution' onClick={this.onReset.bind(this)} />]
     } else {
-      button = <input className={"btn"} type="button" defaultValue="Submit Solution" onClick={this.onSubmit.bind(this)} />
+      button = <input className={'btn'} type='button' defaultValue='Submit Solution' onClick={this.onSubmit.bind(this)} />
     }
 
-    return  (
+    return (
       <div>
-        <header id={"code-header"}>
+        <header id={'code-header'}>
           <h1>Code assignment</h1>
           <h1>hi</h1>
           <h3>{assignment.title}</h3>
         </header>
-        <div id={"description"}>
+        <div id={'description'}>
           {assignment.description.map((description, i) => {
-            return <p key={i} dangerouslySetInnerHTML={{__html:description}}></p>
+            return <p key={i} dangerouslySetInnerHTML={{__html: description}} />
           })}
         </div>
-        <pre id="editor">
-        </pre>
-        <p className={"msg"} dangerouslySetInnerHTML={{__html:msg}}></p>
+        <pre id='editor' />
+        <p className={'msg'} dangerouslySetInnerHTML={{__html: msg}} />
         <br />
-        <div className={"submit-btns"} >
+        <div className={'submit-btns'} >
           {button}
         </div>
-        <pre style={{display:'none'}}>
-          {JSON.stringify(this.state,null,2)}
+        <pre style={{display: 'none'}}>
+          {JSON.stringify(this.state, null, 2)}
         </pre>
       </div>)
-    }
+  }
 }
 
 ReactDOM.render(
-    <CodeComponent />,
+  <CodeComponent />,
   document.getElementById('root')
-);
+)

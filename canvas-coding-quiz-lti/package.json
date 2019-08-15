@@ -28,5 +28,6 @@
   },
   "scripts": {
     "start": "nodemon"
-  }
+  },
+  "proxy": "http://localhost:3001"
 }
