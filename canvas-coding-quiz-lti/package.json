@@ -17,11 +17,11 @@
     "ims-lti": "^3.0.2",
     "jquery": "^3.4.1",
     "jsdom": "^11.12.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mocha-jsdom": "^1.2.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.2",
     "react-ace": "^5.10.0",
     "react-monaco-editor": "^0.17.2",
     "standard": "^11.0.1"
