@@ -21,11 +21,11 @@ function getAssignment (id) {
 
 function load_freecodecamp_challenges () {
   const fcc_includes = [
-    'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json',
-    'freeCodeCamp/seed/challenges/02-javascript-algorithms-and-data-structures/es6.json',
-    'freeCodeCamp/seed/challenges/01-responsive-web-design/basic-html-and-html5.json',
-    'freeCodeCamp/seed/challenges/03-front-end-libraries/jquery.json',
-    'freeCodeCamp/seed/challenges/03-front-end-libraries/react.json'
+    'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json',
+    'seed/challenges/02-javascript-algorithms-and-data-structures/es6.json',
+    'seed/challenges/01-responsive-web-design/basic-html-and-html5.json',
+    'seed/challenges/03-front-end-libraries/jquery.json',
+    'seed/challenges/03-front-end-libraries/react.json'
 
   ]
   const fcc_index = {}
@@ -69,7 +69,8 @@ function getInit (req, res) {
 }
 
 function getState (req, res) {
-  const assignment = getAssignment('bd7123c9c443eddfaeb5bdef')
+  const assignment = getAssignment('bad87fee1348bd9bedc08826')
+  console.log(assignment)
   // req.session.assignment.syntax = req.session.syntax || 'javascript'
   // console.log(assignment.syntax)
   // console.log(req.session)

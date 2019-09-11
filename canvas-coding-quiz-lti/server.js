@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const lti = require('ims-lti')
-const fs = require('fs')
+// const lti = require('ims-lti')
+// const fs = require('fs')
 const logger = require('morgan')
 const canvas = require('./canvas-api')
 const path = require('path')
@@ -9,6 +9,7 @@ const session = require('express-session')
 const PORT = 3030
 
 const ltiRoute = require('./routes/lti')
+const indexRoute = require('./routes/index')
 
 const app = express()
 

@@ -160,7 +160,7 @@ function create_lti_assignment (cid, id, name, group_id) {
 
 function read_fcc_json (filename) {
   filename = filename || 'basic-javascript.json'
-  const fcc_includes = [ `freecodecamp/seed/challenges/02-javascript-algorithms-and-data-structures/${filename}` ]
+  const fcc_includes = [ `seed/challenges/02-javascript-algorithms-and-data-structures/${filename}` ]
   const fcc_data = JSON.parse(fs.readFileSync(fcc_includes[0]))
   const fcc_index = {}
   for (let challenge of fcc_data.challenges) {
