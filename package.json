@@ -11,6 +11,7 @@
     "chai": "^4.2.0",
     "chai-jq": "0.0.9",
     "chai-jquery": "^2.1.0",
+    "dotenv": "^8.1.0",
     "esprima": "^4.0.1",
     "express": "^4.17.1",
     "express-session": "^1.16.2",

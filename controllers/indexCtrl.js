@@ -6,11 +6,6 @@ const assert = chai.assert
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
-// const fcc = loadFreeCodeCampChallenges()
-
-// const path = require('path')
-// const config = require('../config')
-
 // Helper Functions
 function getAssignment (id) {
   const fcc = loadFreeCodeCampChallenges()

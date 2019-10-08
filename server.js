@@ -3,6 +3,8 @@ const logger = require('morgan')
 const canvas = require('./canvas-api')
 const path = require('path')
 const session = require('express-session')
+require('dotenv').config()
+
 const PORT = process.env.PORT || 3031
 
 const app = express()

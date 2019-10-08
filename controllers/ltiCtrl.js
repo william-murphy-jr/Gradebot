@@ -1,5 +1,4 @@
 const lti = require('ims-lti')
-const config = require('../config')
 const fs = require('fs')
 const path = require('path')
 const cheapsession = {}
@@ -30,7 +29,7 @@ const cheapsession = {}
 
 async function post (req, res) {
   /* TODO - fetch user's previous submission */
-  const provider = new lti.Provider(config.consumer_key, config.consumer_secret)
+  const provider = new lti.Provider(process.env.CONSUMER_KEY, process.env.CONSUMER_SECRET)
   console.log(provider)
   provider.valid_request(req, async (err, isValid) => {
     if (err) {
