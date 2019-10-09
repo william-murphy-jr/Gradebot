@@ -5,7 +5,7 @@ const fs = require('fs')
 
 // put canvas admin api key in here
 // (created on site admin under /profile)
-const config = require('./config')
+// const config = require('./config')
 
 function parselinks (resp) {
   // parse pagination link header
@@ -25,13 +25,13 @@ function parselinks (resp) {
 
 async function req (url, method = 'get', params = null) {
   // make a canvas API request. automatically does pagination to grab all entries.
-  const headers = {'Authorization': `Bearer ${config.canvas_api_token}`}
+  const headers = {'Authorization': `Bearer ${process.env.CANVAS_API_TOKEN}`}
   var body = null
   if (params) {
     body = querystring.stringify(params)
     headers['content-type'] = 'application/x-www-form-urlencoded'
   }
-  const uri = `${config.canvas_base}/api/v1${url}`
+  const uri = `${process.env.CANVAS_BASE}/api/v1${url}`
   const opts = {headers, method, body}
   console.log(method, uri, params)
 
