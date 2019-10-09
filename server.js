@@ -5,7 +5,7 @@ const path = require('path')
 const session = require('express-session')
 require('dotenv').config()
 
-const PORT = process.env.PORT || 3031
+const PORT = process.env.PORT || 3030
 
 const app = express()
 

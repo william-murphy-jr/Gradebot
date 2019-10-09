@@ -9,8 +9,9 @@ const { JSDOM } = jsdom
 // Helper Functions
 function getAssignment (id) {
   const fcc = loadFreeCodeCampChallenges()
-  if (fcc.fcc_index[id]) {
-    const challenge = fcc.fcc_index[id]
+  console.log(fcc.fccIndex[id])
+  if (fcc.fccIndex[id]) {
+    const challenge = fcc.fccIndex[id]
     return challenge
   }
   console.error(`unable to find assignment with id ${id}`)
@@ -18,12 +19,12 @@ function getAssignment (id) {
 
 const loadFreeCodeCampChallenges = () => {
   const fccIncludes = [
-    'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json',
-    'seed/challenges/02-javascript-algorithms-and-data-structures/object-oriented-programming.json',
-    'seed/challenges/02-javascript-algorithms-and-data-structures/es6.json',
-    'seed/challenges/01-responsive-web-design/basic-html-and-html5.json',
-    'seed/challenges/03-front-end-libraries/jquery.json',
-    'seed/challenges/03-front-end-libraries/react.json'
+    'seed/challenges/02-javascript-algorithms-and-data-structures/basic-javascript.json'
+    // 'seed/challenges/02-javascript-algorithms-and-data-structures/object-oriented-programming.json',
+    // 'seed/challenges/02-javascript-algorithms-and-data-structures/es6.json',
+    // 'seed/challenges/01-responsive-web-design/basic-html-and-html5.json',
+    // 'seed/challenges/03-front-end-libraries/jquery.json',
+    // 'seed/challenges/03-front-end-libraries/react.json'
 
   ]
   const fccIndex = {}
@@ -62,7 +63,7 @@ let codeEval = (req, res, next) => {
 }
 
 function getState (req, res) {
-  const assignment = getAssignment('587d7db2367417b2b2512b8b')
+  const assignment = getAssignment('587d7b7e367417b2b2512b21')
   console.log(assignment)
   // req.session.assignment.syntax = req.session.syntax || 'javascript'
   // console.log(assignment.syntax)
