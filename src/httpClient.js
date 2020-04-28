@@ -1,17 +1,19 @@
-import axios from 'axios'
+import axios from 'axios';
 
-const httpClient = axios.create()
+const httpClient = axios.create();
 
-httpClient.getChallenge = function(sessionId="bad87fee1348bd9aedf0887a") {
-	return this({ method: 'get', url: `/lti/getstate/${sessionId}`})
-}
+httpClient.getChallenge = (sessionId = '56533eb9ac21ba0edf2244a9') =>
+  this({ method: 'get', url: `/lti/getstate/${sessionId}` });
 
-httpClient.testCode = function(data) {
-  return this({method: 'post', url:`/lti/checkanswer`, data})
-}
+httpClient.testCode = data =>
+  this({ method: 'post', url: `/lti/checkanswer`, data });
 
 httpClient.grade = function(body, sessionId) {
-  return this({method:'post', url:`/lti/grade/${sessionId}`, data:body})
-}
+  return this({
+    method: 'post',
+    url: `/lti/grade/${sessionId}`,
+    data: body,
+  });
+};
 
-export default httpClient
+export default httpClient;

@@ -10,7 +10,7 @@ const app = express();
 const ltiRoute = require('./routes/lti');
 const indexRoute = require('./routes/index');
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'pubic')));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,6 +25,10 @@ app.use(
 
 app.use('/', indexRoute);
 app.use('/lti', ltiRoute);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(`${__dirname}/src/public/index.html`));
+});
 
 app.listen(PORT, err =>
   console.log(err || `server running on ${PORT}`),
