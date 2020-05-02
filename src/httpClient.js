@@ -3,7 +3,7 @@ import axios from 'axios';
 const httpClient = axios.create();
 
 httpClient.getChallenge = function(
-  sessionId = 'bad87fee1348bd9acdd08826',
+  sessionId = 'bad87fee1348bd9aed708826',
 ) {
   return this({ method: 'get', url: `/lti/getstate/${sessionId}` });
 };

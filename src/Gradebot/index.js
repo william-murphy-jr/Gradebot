@@ -109,7 +109,6 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
-    // debugger;
     const scriptedCode = await this.injectJS(script)
     console.log('scriptedCode: ', scriptedCode);
     setTimeout(() => {
@@ -140,6 +139,7 @@ export default class GradeBot extends Component {
     const params = window.location.pathname.split('/');
     this.sessionId = params[2];
     addBootstrap();
+    addjQueryPlayGroundStyles();
     addjQuery();
 
     await httpClient.getChallenge(this.sessionId).then(res => {
@@ -276,8 +276,8 @@ export default class GradeBot extends Component {
               }}
             >
               <div>
-                <img src={iPhone} />
-                <iframe id='iframe'></iframe>
+                <img src={iPhone} alt='iPhone'/>
+                <iframe id='iframe' title='jquery'></iframe>
               </div>
             </div>
           </div>
@@ -297,6 +297,30 @@ function addBootstrap() {
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(bootstrap);
+}
+
+function addjQueryPlayGroundStyles() {
+  const playGroundStyles = document.createElement('style');
+  const cssPlayGroundStyles = `
+    .well {
+      width: 84px;
+      padding-left: 2px;
+    }
+    .col-xs-6 {
+      padding-left: 11px;
+      padding-right: 11px;
+    }
+    h4 {
+      height: 40px;
+    }
+    button:not(:first-of-type) {
+      margin-top: 3px;
+    }
+  `
+  const head = document.getElementById('iframe').contentWindow
+    .document.head;
+  playGroundStyles.innerHTML = cssPlayGroundStyles;
+  head.append(playGroundStyles);
 }
 
 function addjQuery() {
