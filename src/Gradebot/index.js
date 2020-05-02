@@ -17,6 +17,10 @@ import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
 
+// inject jQuery into page
+// import $ from "jquery"; 
+
+
 const override = css`
   display: block;
   margin: 0 auto;
@@ -31,7 +35,7 @@ export default class GradeBot extends Component {
     instructions: [],
     tests: [],
     passing: [],
-    syntax: 'javascript',
+    syntax: 'html',
     show: false,
     completed: false,
     loading: false,
@@ -92,6 +96,16 @@ export default class GradeBot extends Component {
     const iFrameHead = document.getElementById('iframe').contentWindow
       .document.head;
     const myScript = document.createElement('script');
+    // myScript.src = "https://code.jquery.com/jquery-3.5.0.js";
+    // type="text/javascript";
+    // myScript.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
+    // myScript.crossOrigin = "anonymous";
+    if (typeof(jQuery) == "undefined") {
+      // myScript = document.getElementsByTagName("body")[0];
+      const jQuery = function (selector) { return this.parent.jQuery(selector, myScript); };
+      const $ = jQuery;
+    }
+    
     myScript.innerHTML = code;
     await iFrameHead.appendChild(myScript);
     return document.getElementById('iframe').contentWindow.document;
@@ -109,7 +123,9 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
-    // const scriptedCode = await this.injectJS(script)
+    // debugger;
+    const scriptedCode = await this.injectJS(script)
+    console.log('scriptedCode: ', scriptedCode);
     setTimeout(() => {
       const data = {
         code,
@@ -148,7 +164,7 @@ export default class GradeBot extends Component {
       this.setState({
         assignment: res.data.assignment,
         challengeSeed: res.data.assignment.challengeSeed,
-        syntax: res.data.assignment.syntax,
+        syntax: 'html',
         description,
         instructions,
         tests: res.data.assignment.tests,
@@ -298,9 +314,13 @@ function addBootstrap() {
 }
 
 function addjQuery() {
-  const jQuery = document.createElement('link');
-  jQuery.href = './static/jquery-3.4.1.min.js';
-  jQuery.type = 'text/javascript';
+  const jQuery = document.createElement('script');
+  // jQuery.href = './static/jquery-3.4.1.min.js';
+  // jQuery.type = 'text/javascript';
+
+  jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
+    jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
+    jQuery.crossOrigin = "anonymous";
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(jQuery);
