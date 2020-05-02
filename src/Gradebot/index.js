@@ -17,10 +17,6 @@ import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
 
-// inject jQuery into page
-// import $ from "jquery"; 
-
-
 const override = css`
   display: block;
   margin: 0 auto;
@@ -96,16 +92,6 @@ export default class GradeBot extends Component {
     const iFrameHead = document.getElementById('iframe').contentWindow
       .document.head;
     const myScript = document.createElement('script');
-    // myScript.src = "https://code.jquery.com/jquery-3.5.0.js";
-    // type="text/javascript";
-    // myScript.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
-    // myScript.crossOrigin = "anonymous";
-    if (typeof(jQuery) == "undefined") {
-      // myScript = document.getElementsByTagName("body")[0];
-      const jQuery = function (selector) { return this.parent.jQuery(selector, myScript); };
-      const $ = jQuery;
-    }
-    
     myScript.innerHTML = code;
     await iFrameHead.appendChild(myScript);
     return document.getElementById('iframe').contentWindow.document;
@@ -283,7 +269,7 @@ export default class GradeBot extends Component {
               </ButtonContainer>
             </div>
             <div
-              class='iphone'
+              className='iphone'
               style={{
                 display:
                   this.state.syntax !== 'html' ? 'none' : 'block',
@@ -318,9 +304,21 @@ function addjQuery() {
   // jQuery.href = './static/jquery-3.4.1.min.js';
   // jQuery.type = 'text/javascript';
 
+  /**
+   * TODO: 
+   * 1. We need to link to static or a jQuery node module NOT Working
+   * 2a. Add a conditional to possibly remove old script tags
+   *  b. Just remove them.  
+   *    before re-rendering.
+   * 3. 
+   * 
+   */
+  
   jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
-    jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
-    jQuery.crossOrigin = "anonymous";
+  jQuery.type = 'text/javascript';
+  jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
+  jQuery.crossOrigin = "anonymous";
+
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(jQuery);
