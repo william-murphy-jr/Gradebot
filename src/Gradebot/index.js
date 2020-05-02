@@ -306,10 +306,12 @@ function addjQuery() {
 
   /**
    * TODO: 
-   * 1. We need to link to static or a jQuery node module NOT Working
-   * 2a. Add a conditional to possibly remove old script tags
-   *  b. Just remove them.  
-   *    before re-rendering.
+   * 1. We need to link to static's jQuery or 
+   *    Query node module *** Method NOT Working ***
+   * 2a. Add a conditional to possibly remove old script tags that build up
+   *     from repeated submissions.
+   *  b. Can we just remove them before re-rendering/testing?
+   *     Could it break something!!!
    * 3. 
    * 
    */
