@@ -89,12 +89,19 @@ export default class GradeBot extends Component {
   }
 
   injectJS (code){
-    const iFrameHead = document.getElementById('iframe').contentWindow
-      .document.head;
+    const iFrameDoc = document.getElementById('iframe').contentWindow.document;
+    const iFrameHead = iFrameDoc.head;
+    const scripts = iFrameDoc.scripts;
+
+    // Remove the old test script tag. NOT the one that call's the jQuery CDN
+    // Don't let them build up.
+    if (scripts.length > 1) { scripts[1].remove(); }
+
     const myScript = document.createElement('script');
     myScript.innerHTML = code;
     iFrameHead.appendChild(myScript);
-    const iFrameDocument = document.getElementById('iframe').contentWindow.document;
+    const iFrameDocument = document.getElementById('iframe')
+      .contentWindow.document;
     return iFrameDocument;
   }
 
@@ -110,9 +117,6 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
-
-    // const scriptedCode = setTimeout(() => this.injectJS(script), 100)
-    // console.log('scriptedCode: ', scriptedCode);
 
     setTimeout(() => {
       const data = {
@@ -134,7 +138,7 @@ export default class GradeBot extends Component {
           challengeSeed: [code],
         });
       }).then(() => {
-        const scriptedCode = this.injectJS(script);
+        const scriptedCode = this.injectJS(script); // Delay or will throw
         console.log('scriptedCode: ', scriptedCode);
       }).catch((error) => {
         console.log('Error testing Code');
