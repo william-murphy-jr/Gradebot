@@ -88,13 +88,14 @@ export default class GradeBot extends Component {
     return result;
   }
 
-  async injectJS(code) {
+  injectJS (code){
     const iFrameHead = document.getElementById('iframe').contentWindow
-      .document.head;
+    .document.head;
     const myScript = document.createElement('script');
     myScript.innerHTML = code;
-    await iFrameHead.appendChild(myScript);
-    return document.getElementById('iframe').contentWindow.document;
+    iFrameHead.appendChild(myScript);
+    const iFrameDocument = document.getElementById('iframe').contentWindow.document;
+    return iFrameDocument;
   }
 
   makeTests = async () => {
@@ -109,38 +110,46 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
-    const scriptedCode = await this.injectJS(script)
-    console.log('scriptedCode: ', scriptedCode);
+
+    // const scriptedCode = setTimeout(() => this.injectJS(script), 100)
+    // console.log('scriptedCode: ', scriptedCode);
+
     setTimeout(() => {
       const data = {
         code,
         head:
-          this.state.assignment.head &&
-          this.state.assignment.head.join('\n'),
+        this.state.assignment.head &&
+        this.state.assignment.head.join('\n'),
         tail:
-          this.state.assignment.tail &&
-          this.state.assignment.tail.join('\n'),
+        this.state.assignment.tail &&
+        this.state.assignment.tail.join('\n'),
         tests: this.state.assignment.tests,
         syntax: this.state.syntax,
         html: code,
       };
+      
       httpClient.testCode(data, assignmentId).then(res => {
         this.setState({
           passing: res.data,
           challengeSeed: [code],
         });
-      });
+      }).then(() => {
+        const scriptedCode = this.injectJS(script);
+        console.log('scriptedCode: ', scriptedCode);
+      }).catch((error) => {
+        console.log('Error testing Code');
+      })
     }, 100);
   };
-
+  
   async componentDidMount() {
     this._editor = this.ace.editor;
     this._editor.session.setOption('indentedSoftWrap', false);
     const params = window.location.pathname.split('/');
     this.sessionId = params[2];
     addBootstrap();
-    addjQueryPlayGroundStyles();
-    addjQuery();
+    addJQueryPlayGroundStyles();
+    addJQuery();
 
     await httpClient.getChallenge(this.sessionId).then(res => {
       const description = res.data.assignment.description;
@@ -299,7 +308,7 @@ function addBootstrap() {
   head.append(bootstrap);
 }
 
-function addjQueryPlayGroundStyles() {
+function addJQueryPlayGroundStyles() {
   const playGroundStyles = document.createElement('style');
   const cssPlayGroundStyles = `
     .well {
@@ -316,14 +325,14 @@ function addjQueryPlayGroundStyles() {
     button:not(:first-of-type) {
       margin-top: 3px;
     }
-  `
+  `;
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   playGroundStyles.innerHTML = cssPlayGroundStyles;
   head.append(playGroundStyles);
 }
 
-function addjQuery() {
+function addJQuery() {
   const jQuery = document.createElement('script');
   // jQuery.href = './static/jquery-3.4.1.min.js';
   // jQuery.type = 'text/javascript';
