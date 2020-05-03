@@ -90,7 +90,7 @@ export default class GradeBot extends Component {
 
   injectJS (code){
     const iFrameHead = document.getElementById('iframe').contentWindow
-    .document.head;
+      .document.head;
     const myScript = document.createElement('script');
     myScript.innerHTML = code;
     iFrameHead.appendChild(myScript);
@@ -296,7 +296,7 @@ export default class GradeBot extends Component {
   }
 }
 
-//Helper Functions
+// Helper Functions
 
 function addBootstrap() {
   const bootstrap = document.createElement('link');
@@ -308,6 +308,7 @@ function addBootstrap() {
   head.append(bootstrap);
 }
 
+// Move either all helpers to their own file of at least the CSS template
 function addJQueryPlayGroundStyles() {
   const playGroundStyles = document.createElement('style');
   const cssPlayGroundStyles = `
@@ -325,36 +326,74 @@ function addJQueryPlayGroundStyles() {
     button:not(:first-of-type) {
       margin-top: 3px;
     }
+
+    .animated.shake {
+      /* Start the shake animation and make the animation last for 0.5 seconds */
+      animation: shake 0.75s;
+    
+      /* When the animation is finished, start again */
+      animation-iteration-count: infinite;
+    }
+    
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    .animated.bounce {
+      /* Start the shake animation and make the animation last for 0.5 seconds */
+      animation: bounce 1.5s;
+    
+      /* When the animation is finished, start again */
+      animation-iteration-count: infinite;
+    }
+    
+    @keyframes bounce {
+      0% { transform: translate( 0px, 0px); }
+      10% { transform: translate(0px, 3px); }
+      20% { transform: translate(0px, 6px); }
+      30% { transform: translate(0px, 9px); }
+      40% { transform: translate(0px, 6px); }
+      50% { transform: translate(0px, 3px); }
+      60% { transform: translate(0px, 0px); }
+      70% { transform: translate(0px, -3px); }
+      80% { transform: translate(0px,-6px); }
+      87% { transform: translate(0px, -9px); }
+      94% { transform: translate(0px, -6px); }
+      100% { transform: translate(0px, -3px); }
+    }
   `;
+
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   playGroundStyles.innerHTML = cssPlayGroundStyles;
   head.append(playGroundStyles);
 }
 
-function addJQuery() {
-  const jQuery = document.createElement('script');
-  // jQuery.href = './static/jquery-3.4.1.min.js';
-  // jQuery.type = 'text/javascript';
-
-  /**
+/**
    * TODO: 
-   * 1. We need to link to static's jQuery or 
-   *    Query node module *** Method NOT Working ***
-   * 2a. Add a conditional to possibly remove old script tags that build up
-   *     from repeated submissions.
-   *  b. Can we just remove them before re-rendering/testing?
-   *     Could it break something!!!
-   * 3. 
-   * 
+   * 1. We need to link to static's jQuery NOT a CDN
    */
+  function addJQuery() {
+    const jQuery = document.createElement('script');
+    // jQuery.href = './static/jquery-3.4.1.min.js'; find jQuery in static
+    
+    jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
+    jQuery.type = 'text/javascript';
+    jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
+    jQuery.crossOrigin = "anonymous";
   
-  jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
-  jQuery.type = 'text/javascript';
-  jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
-  jQuery.crossOrigin = "anonymous";
-
-  const head = document.getElementById('iframe').contentWindow
-    .document.head;
-  head.append(jQuery);
-}
+    const head = document.getElementById('iframe').contentWindow
+      .document.head;
+    head.append(jQuery);
+  }
+  
