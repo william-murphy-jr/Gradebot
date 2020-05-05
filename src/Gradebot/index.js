@@ -98,21 +98,10 @@ export default class GradeBot extends Component {
     // Remove the old test script tag. NOT the one that call's the jQuery CDN
     // Reason we don't want to let them build up.
     if (scripts.length > 1) { scripts[1].remove(); }
-    const oldLength = iFrameDoc.scripts.length
+    
     const myScript = document.createElement('script');
     myScript.innerHTML = code;
-
     iFrameHead.appendChild(myScript);
-
-    // // Needed to stop Intermittent jQuery $ not
-    // // defined error caused when not using setTimeout
-    // // https://swizec.com/blog/how-to-properly-wait-for-dom-elements-to-show-up-in-modern-browsers/swizec/6663
-    // function waitForAppendChild() {
-    //   if (iFrameDoc.scripts.length <= oldLength) {
-    //     window.requestAnimationFrame(waitForAppendChild);
-    //   }
-    // };
-    // waitForAppendChild();
 
     const iFrameDocument = document.getElementById('iframe')
       .contentWindow.document;
