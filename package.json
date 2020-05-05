@@ -23,7 +23,7 @@
     "mocha-jsdom": "^1.2.0",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
-    "nodemon": "^1.19.2",
+    "nodemon": "^1.19.4",
     "react": "^16.9.0",
     "react-ace": "^5.10.0",
     "react-ace-editor": "0.0.2",

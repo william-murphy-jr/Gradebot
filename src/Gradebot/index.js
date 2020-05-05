@@ -104,15 +104,15 @@ export default class GradeBot extends Component {
 
     iFrameHead.appendChild(myScript);
 
-    // Needed to stop Intermittent jQuery $ not
-    // defined error caused when not using setTimeout
-    // https://swizec.com/blog/how-to-properly-wait-for-dom-elements-to-show-up-in-modern-browsers/swizec/6663
-    function waitForAppendChild() {
-      if (iFrameDoc.scripts.length <= oldLength) {
-        window.requestAnimationFrame(waitForAppendChild);
-      }
-    };
-    waitForAppendChild();
+    // // Needed to stop Intermittent jQuery $ not
+    // // defined error caused when not using setTimeout
+    // // https://swizec.com/blog/how-to-properly-wait-for-dom-elements-to-show-up-in-modern-browsers/swizec/6663
+    // function waitForAppendChild() {
+    //   if (iFrameDoc.scripts.length <= oldLength) {
+    //     window.requestAnimationFrame(waitForAppendChild);
+    //   }
+    // };
+    // waitForAppendChild();
 
     const iFrameDocument = document.getElementById('iframe')
       .contentWindow.document;
@@ -131,7 +131,12 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
-
+      
+    setTimeout(() => {
+      const scriptedCode = this.injectJS(script)
+      console.log('scriptedCode: ', scriptedCode);
+    }, 100); // Delay or will throw
+    
     // setTimeout(() => {
       const data = {
         code,
@@ -145,18 +150,15 @@ export default class GradeBot extends Component {
         syntax: this.state.syntax,
         html: code,
       };
-      
+
       httpClient.testCode(data, assignmentId).then(res => {
         this.setState({
           passing: res.data,
           challengeSeed: [code],
         });
-      }).then(() => {
-        const scriptedCode = this.injectJS(script); // Delay or will throw
-        console.log('scriptedCode: ', scriptedCode);
       }).catch((error) => {
-        console.log('Error testing Code');
-      })
+      console.log(`Big Big => ${error} <= Error testing Code`);
+    })
     // }, 100);
   };
   
