@@ -15,6 +15,10 @@ import iPhone from './iphone.png';
 
 import playGroundCSS from './playGroundStyles';
 
+import jsdom from 'jsdom';
+import jquery from 'jquery';
+
+
 import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
@@ -116,16 +120,49 @@ export default class GradeBot extends Component {
       ? this._editor.getValue()
       : this.state.challengeSeed.join('\n');
     iFrameDoc.body.innerHTML = code;
+    // console.log('iFrameDoc.body.innerHTML', iFrameDoc.body.innerHTML)
     const script = code.substring(
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
+     
+    let scriptedCode;
+
+    const runScriptedCode = () => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          scriptedCode = this.injectJS(script)
+          console.log('scriptedCode: ', scriptedCode);
+          console.log('typeof scriptedCode: ', typeof scriptedCode);
+          resolve(scriptedCode);
+        }, 100); // Delay or will throw
+      });
+    }
+
+    const jQueryDomEval = (scriptedCode) => {
       
-    setTimeout(() => {
-      const scriptedCode = this.injectJS(script)
-      console.log('scriptedCode: ', scriptedCode);
-    }, 100); // Delay or will throw
+      const { JSDOM } = jsdom;
+      // const scriptedCodeSerialized = new XMLSerializer().serializeToString(iFrameDoc);
+      const scriptedCodeSerialized = new XMLSerializer().serializeToString(scriptedCode);
+      const dom = new JSDOM(`<!DOCTYPE html> ${scriptedCodeSerialized}`, { runScripts: "outside-only", resources: "usable" });
+      // const dom = new JSDOM(`<!DOCTYPE html> ${scriptedCodeSerialized}`, { runScripts: "dangerously" });
+      const $ = jquery(dom.window)
+      console.log(dom.window.document.body.innerHTML); // "Hello world"
+      
+      // console.log('dom.serialize: ', dom.serialize());
+      // debugger;
+      // console.log('dom.serialize: ', dom.serialize());
+      // console.log(dom.window.document);
+      
+      return;
+    };
     
+    runScriptedCode()
+      .then((scriptedCode) => {
+        jQueryDomEval(scriptedCode);
+    })
+      .catch(error => console.log('Big error ', error));
+
     // setTimeout(() => {
       const data = {
         code,
@@ -309,9 +346,13 @@ export default class GradeBot extends Component {
 
 function addBootstrap() {
   const bootstrap = document.createElement('link');
-  bootstrap.href =
-    'https://static.tlmworks.org/track1/bootstrap/bootstrap3/css/bootstrap.min.css';
+  // bootstrap.href = 
+  //   'https://static.tlmworks.org/track1/bootstrap/bootstrap3/css/bootstrap.min.css';
+  bootstrap.href = 'bootstrap/dist/css/bootstrap.css'
   bootstrap.rel = 'stylesheet';
+  bootstrap.type = 'text/css';
+  bootstrap.integrity = "";
+  bootstrap.crossorigin = "anonymous";
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(bootstrap);
