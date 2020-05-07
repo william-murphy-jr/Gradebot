@@ -11,17 +11,17 @@ import { ClipLoader } from 'react-spinners';
 import { css } from '@emotion/core';
 import React, { Component } from 'react';
 import httpClient from '../httpClient.js';
-import iPhone from './iphone.png';
-
-import playGroundCSS from './playGroundStyles';
-
 import jsdom from 'jsdom';
-import jquery from 'jquery';
+
+import iPhone from './iphone.png';
+import playGroundCSS from './playGroundStyles';
 
 
 import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
+
+const __DEBUG = false;
 
 const override = css`
   display: block;
@@ -99,12 +99,20 @@ export default class GradeBot extends Component {
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
 
-    // Remove the old test script tag. NOT the one that call's the jQuery CDN
-    // Reason we don't want to let them build up.
+    // Remove the old test script tag. But NOT the one that call's the jQuery CDN
+    // Reason - We don't want to let them build up.
     if (scripts.length > 1) { scripts[1].remove(); }
     
     const myScript = document.createElement('script');
-    myScript.innerHTML = code;
+
+    // We will use localStorage to save the contents of the jsdom.
+    // This is to get around a issue with running JSDOM on the 
+    // client-side as opposed to on node.js
+    // This snippet will be removed before being sent to server.
+    const jsdomLocalStorage = `$(function() {
+      window.localStorage.setItem('html',  document.head.innerHTML + "" + document.body.innerHTML);
+    });`
+    myScript.innerHTML = code + jsdomLocalStorage;
     iFrameHead.appendChild(myScript);
 
     const iFrameDocument = document.getElementById('iframe')
@@ -120,48 +128,47 @@ export default class GradeBot extends Component {
       ? this._editor.getValue()
       : this.state.challengeSeed.join('\n');
     iFrameDoc.body.innerHTML = code;
-    // console.log('iFrameDoc.body.innerHTML', iFrameDoc.body.innerHTML)
     const script = code.substring(
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
      
-    let scriptedCode;
-
+    
     const runScriptedCode = () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          scriptedCode = this.injectJS(script)
-          console.log('scriptedCode: ', scriptedCode);
-          console.log('typeof scriptedCode: ', typeof scriptedCode);
+          const scriptedCode = this.injectJS(script)
           resolve(scriptedCode);
-        }, 100); // Delay or will throw
+        }, 100); // Delay Needed or will throw
       });
     }
 
-    const jQueryDomEval = (scriptedCode) => {
-      
-      const { JSDOM } = jsdom;
-      // const scriptedCodeSerialized = new XMLSerializer().serializeToString(iFrameDoc);
-      const scriptedCodeSerialized = new XMLSerializer().serializeToString(scriptedCode);
-      const dom = new JSDOM(`<!DOCTYPE html> ${scriptedCodeSerialized}`, { runScripts: "outside-only", resources: "usable" });
-      // const dom = new JSDOM(`<!DOCTYPE html> ${scriptedCodeSerialized}`, { runScripts: "dangerously" });
-      const $ = jquery(dom.window)
-      console.log(dom.window.document.body.innerHTML); // "Hello world"
-      
-      // console.log('dom.serialize: ', dom.serialize());
-      // debugger;
-      // console.log('dom.serialize: ', dom.serialize());
-      // console.log(dom.window.document);
-      
-      return;
+
+    const jQueryDomEval = (_script) => {
+      return new Promise((resolve, reject) => {
+        const { JSDOM } = jsdom;
+        const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
+        __DEBUG && console.log('iFrame', iFrame)
+        
+        // JSDOM has no done() promise/callback so wait to grab processed DOM
+        // from localStorage (this is an issue workaround)
+        setTimeout(() => {
+          const iFrameHTML = localStorage.getItem('html');
+          resolve(iFrameHTML);
+        }, 100); 
+      });
     };
     
     runScriptedCode()
       .then((scriptedCode) => {
-        jQueryDomEval(scriptedCode);
+        jQueryDomEval(scriptedCode)
+          .then((iFrameHTML) => {
+            localStorage.remove('html');
+            console.log('iFrameHTML: Promise  \n', iFrameHTML);
+          })
+          .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
     })
-      .catch(error => console.log('Big error ', error));
+      .catch(error => console.error('Big error ', error));
 
     // setTimeout(() => {
       const data = {
