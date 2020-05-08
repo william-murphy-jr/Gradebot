@@ -21,7 +21,7 @@ import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
 
-const __DEBUG = false;
+const __DEBUG = true;
 
 const override = css`
   display: block;
@@ -146,6 +146,7 @@ export default class GradeBot extends Component {
         // processed DOM from localStorage (this is an issue workaround) 
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
+          localStorage.removeItem('html');
           const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
           resolve(iFrameHTMLRegEx);
         }, 100); 
@@ -160,12 +161,13 @@ export default class GradeBot extends Component {
           // console.log(' ****************** iFrameHTML  Processed Processed: Promise ********************* \n', iFrameHTMLProcessed);
             // code = iFrameHTMLProcessed;
             // console.log('&*&*&*&*&*& code: *&*&*&****&**&*&*&*&&&*&*&*&* ', code)
+            console.log('typeof iFrameHTMLProcessed *&^%$%^&^%$% ', typeof iFrameHTMLProcessed)
+            this.makeTests(iFrameHTMLProcessed);
         })
         .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
     })
       .catch(error => console.error('Big error with the script injection call', error));
 
-    this.makeTests();
   } // runTests()
 
   loadEditor = () => {
@@ -196,9 +198,10 @@ export default class GradeBot extends Component {
     });
   }
 
-  makeTests = async () => {
+  makeTests = async (editorData = null) => {
     let { assignmentId, code, script } = this.loadEditor()
     // this.runScriptedCode(script); 
+    code = editorData || code;
     
     // setTimeout(() => {
       const data = {
@@ -251,6 +254,8 @@ export default class GradeBot extends Component {
       });
     });
     this.challengeSeed = this.state.assignment.challengeSeed;
+    let { assignmentId, code, script } = this.loadEditor()
+    this.runScriptedCode(script); 
     this.makeTests();
   }
 
@@ -399,7 +404,12 @@ function addBootstrap() {
 
 // Move either all helpers to their own file of at least the CSS template
 function addJQueryPlayGroundStyles() {
-  const playGroundStyles = document.createElement('style');
+  const playGroundStyles = document.createElement('link');
+  playGroundStyles.href = 'styles/playGroundStyles.css';
+  playGroundStyles.rel = 'stylesheet';
+  playGroundStyles.type = 'text/css';
+  playGroundStyles.integrity = '';
+  playGroundStyles.crossorigin = 'anonymous';
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   playGroundStyles.innerHTML = playGroundCSS;
