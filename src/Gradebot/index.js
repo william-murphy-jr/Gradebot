@@ -94,7 +94,7 @@ export default class GradeBot extends Component {
     return result;
   }
 
-  injectJS (code, enableStorage = true){
+  injectJS (code, enableLocalStorage = true){
     const iFrameDoc = document.getElementById('iframe').contentWindow.document;
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
@@ -116,7 +116,7 @@ export default class GradeBot extends Component {
     // This is to get around an issue with running JSDOM on the 
     // client-side as opposed to on node.js
     // This snippet will be removed before being sent to server.
-    const jsdomLocalStorage = enableStorage ? `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});` : '';
+    const jsdomLocalStorage = enableLocalStorage ? `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});` : '';
     myScript.innerHTML = code + jsdomLocalStorage;
     iFrameHead.appendChild(myScript);
 
@@ -125,18 +125,16 @@ export default class GradeBot extends Component {
     return iFrameDocument;
   }
 
-  runTests = (enableStorage = false) => {
+  runTests = (enableLocalStorage = false) => {
     let { assignmentId, code, script } = this.loadEditor();     
-    
-    const runScriptedCode = (enableStorage) => {
+    const runScriptedCode = (enableLocalStorage) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const scriptedCode = this.injectJS(script, enableStorage);
+          const scriptedCode = this.injectJS(script, enableLocalStorage);
           resolve(scriptedCode);
         }, 100); // Delay Needed or will throw - DOM Issue?
       });
     }
-    
     
     const jQueryDomEval = (_script) => {
       return new Promise((resolve, reject) => {
@@ -144,8 +142,8 @@ export default class GradeBot extends Component {
         const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
         __DEBUG && console.log('iFrame', iFrame)
         
-        // JSDOM has no done() promise/callback so we have to wait to grab
-        // processed DOM from localStorage (this is an issue workaround)
+        // JSDOM has no done() or a promise/callback so we have to wait to grab
+        // processed DOM from localStorage (this is an issue workaround) 
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
           const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
@@ -189,49 +187,19 @@ export default class GradeBot extends Component {
     }
   }
 
+  runScriptedCode = (script, enableLocalStorage) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const scriptedCode = this.injectJS(script, enableLocalStorage);
+        resolve(scriptedCode);
+      }, 100); // Delay Needed or will throw
+    });
+  }
+
   makeTests = async () => {
     let { assignmentId, code, script } = this.loadEditor()
-     
-    const runScriptedCode = (enableStorage) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const scriptedCode = this.injectJS(script, enableStorage);
-          resolve(scriptedCode);
-        }, 100); // Delay Needed or will throw
-      });
-    }
-
-    runScriptedCode();
+    // this.runScriptedCode(script); 
     
-    // const jQueryDomEval = (_script) => {
-    //   return new Promise((resolve, reject) => {
-    //     const { JSDOM } = jsdom;
-    //     const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
-    //     __DEBUG && console.log('iFrame', iFrame)
-        
-    //     // JSDOM has no done() promise/callback so we have to wait to grab
-    //     // processed DOM from localStorage (this is an issue workaround)
-    //     setTimeout(() => {
-    //       const iFrameHTML = localStorage.getItem('html');
-    //       const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
-    //       resolve(iFrameHTMLRegEx);
-    //     }, 100); 
-    //   });
-    // };
-    
-    // runScriptedCode()
-    // .then((scriptedCode) => {
-    //   jQueryDomEval(scriptedCode)
-    //     .then((iFrameHTMLProcessed) => {
-    //       /** send the data here */
-    //       // console.log(' ****************** iFrameHTML  Processed Processed: Promise ********************* \n', iFrameHTMLProcessed);
-    //         // code = iFrameHTMLProcessed;
-    //         // console.log('&*&*&*&*&*& code: *&*&*&****&**&*&*&*&&&*&*&*&* ', code)
-    //     })
-    //     .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
-    // })
-    //   .catch(error => console.error('Big error with the script injection call', error));
-
     // setTimeout(() => {
       const data = {
         code,
