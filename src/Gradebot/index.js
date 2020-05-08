@@ -126,19 +126,7 @@ export default class GradeBot extends Component {
   }
 
   runTests = (enableStorage = false) => {
-    console.log('runTest');
-    const assignmentId = this.state.assignment.id;
-    const iFrameDoc = document.getElementById('iframe').contentWindow
-      .document;
-    let code = this._editor
-      ? this._editor.getValue()
-      : this.state.challengeSeed.join('\n');
-    iFrameDoc.body.innerHTML = code;
-    const script = code.substring(
-      code.indexOf('<script>') + 8,
-      code.indexOf('</script>'),
-    );
-     
+    let { assignmentId, code, script } = this.loadEditor();     
     
     const runScriptedCode = (enableStorage) => {
       return new Promise((resolve, reject) => {
@@ -182,7 +170,7 @@ export default class GradeBot extends Component {
     this.makeTests();
   } // runTests()
 
-  makeTests = async () => {
+  loadEditor = () => {
     const assignmentId = this.state.assignment.id;
     const iFrameDoc = document.getElementById('iframe').contentWindow
       .document;
@@ -194,8 +182,16 @@ export default class GradeBot extends Component {
       code.indexOf('<script>') + 8,
       code.indexOf('</script>'),
     );
+    return {
+      assignmentId,
+      code,
+      script
+    }
+  }
+
+  makeTests = async () => {
+    let { assignmentId, code, script } = this.loadEditor()
      
-    
     const runScriptedCode = (enableStorage) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -415,7 +411,7 @@ export default class GradeBot extends Component {
       </div>
     );
   }
-}
+} // END OF class Gradebot
 
 // Helper Functions
 
