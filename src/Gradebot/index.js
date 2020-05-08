@@ -94,22 +94,29 @@ export default class GradeBot extends Component {
     return result;
   }
 
-  injectJS (code){
+  injectJS (code, enableStorage = true){
     const iFrameDoc = document.getElementById('iframe').contentWindow.document;
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
 
-    // Remove the old test script tag. But NOT the one that call's the jQuery CDN
-    // Reason - We don't want to let them build up.
-    if (scripts.length > 1) { scripts[1].remove(); }
+    // Remove the old test script tag. NOT the one that call's the jQuery CDN
+    // Reason - We don't want to let them build up with each test submission.
+    console.log("length: ", scripts.length);
+    let length = scripts.length;
+    if (length > 1) { 
+      while (length > 1) {
+        scripts[length - 1].remove();
+        length--;
+      }
+     }
     
     const myScript = document.createElement('script');
 
-    // We will use localStorage to save the contents of the jsdom.
-    // This is to get around a issue with running JSDOM on the 
+    // We will use localStorage to save the contents of the JSDOM.
+    // This is to get around an issue with running JSDOM on the 
     // client-side as opposed to on node.js
     // This snippet will be removed before being sent to server.
-    const jsdomLocalStorage = `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});`
+    const jsdomLocalStorage = enableStorage ? `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});` : '';
     myScript.innerHTML = code + jsdomLocalStorage;
     iFrameHead.appendChild(myScript);
 
@@ -117,6 +124,63 @@ export default class GradeBot extends Component {
       .contentWindow.document;
     return iFrameDocument;
   }
+
+  runTests = (enableStorage = false) => {
+    console.log('runTest');
+    const assignmentId = this.state.assignment.id;
+    const iFrameDoc = document.getElementById('iframe').contentWindow
+      .document;
+    let code = this._editor
+      ? this._editor.getValue()
+      : this.state.challengeSeed.join('\n');
+    iFrameDoc.body.innerHTML = code;
+    const script = code.substring(
+      code.indexOf('<script>') + 8,
+      code.indexOf('</script>'),
+    );
+     
+    
+    const runScriptedCode = (enableStorage) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const scriptedCode = this.injectJS(script, enableStorage);
+          resolve(scriptedCode);
+        }, 100); // Delay Needed or will throw - DOM Issue?
+      });
+    }
+    
+    
+    const jQueryDomEval = (_script) => {
+      return new Promise((resolve, reject) => {
+        const { JSDOM } = jsdom;
+        const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
+        __DEBUG && console.log('iFrame', iFrame)
+        
+        // JSDOM has no done() promise/callback so we have to wait to grab
+        // processed DOM from localStorage (this is an issue workaround)
+        setTimeout(() => {
+          const iFrameHTML = localStorage.getItem('html');
+          const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+          resolve(iFrameHTMLRegEx);
+        }, 100); 
+      });
+    };
+    
+    runScriptedCode(true)
+    .then((scriptedCode) => {
+      jQueryDomEval(scriptedCode)
+        .then((iFrameHTMLProcessed) => {
+          /** send the data here */
+          // console.log(' ****************** iFrameHTML  Processed Processed: Promise ********************* \n', iFrameHTMLProcessed);
+            // code = iFrameHTMLProcessed;
+            // console.log('&*&*&*&*&*& code: *&*&*&****&**&*&*&*&&&*&*&*&* ', code)
+        })
+        .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
+    })
+      .catch(error => console.error('Big error with the script injection call', error));
+
+    this.makeTests();
+  } // runTests()
 
   makeTests = async () => {
     const assignmentId = this.state.assignment.id;
@@ -132,44 +196,45 @@ export default class GradeBot extends Component {
     );
      
     
-    const runScriptedCode = () => {
+    const runScriptedCode = (enableStorage) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const scriptedCode = this.injectJS(script);
+          const scriptedCode = this.injectJS(script, enableStorage);
           resolve(scriptedCode);
         }, 100); // Delay Needed or will throw
       });
     }
-    
-    
-    const jQueryDomEval = (_script) => {
-      return new Promise((resolve, reject) => {
-        const { JSDOM } = jsdom;
-        const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
-        __DEBUG && console.log('iFrame', iFrame)
-        
-        // JSDOM has no done() promise/callback so wait to grab processed DOM
-        // from localStorage (this is an issue workaround)
-        setTimeout(() => {
-          const iFrameHTML = localStorage.getItem('html');
-          console.log("typeof iFrameHTML: ", typeof iFrameHTML)
-          const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
-          resolve(iFrameHTMLRegEx);
-        }, 100); 
-      });
-    };
-    
-    runScriptedCode()
-      .then((scriptedCode) => {
-        jQueryDomEval(scriptedCode)
-          .then((iFrameHTML) => {
-            // localStorage.removeItem('html');
-            console.log('iFrameHTML NOT Processed: Promise  \n', iFrameHTML);
 
-          })
-          .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
-    })
-      .catch(error => console.error('Big error with the script injection call', error));
+    runScriptedCode();
+    
+    // const jQueryDomEval = (_script) => {
+    //   return new Promise((resolve, reject) => {
+    //     const { JSDOM } = jsdom;
+    //     const iFrame = new JSDOM(`<!DOCTYPE html> ${_script}`, { runScripts: "dangerously", resources: "usable" });
+    //     __DEBUG && console.log('iFrame', iFrame)
+        
+    //     // JSDOM has no done() promise/callback so we have to wait to grab
+    //     // processed DOM from localStorage (this is an issue workaround)
+    //     setTimeout(() => {
+    //       const iFrameHTML = localStorage.getItem('html');
+    //       const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+    //       resolve(iFrameHTMLRegEx);
+    //     }, 100); 
+    //   });
+    // };
+    
+    // runScriptedCode()
+    // .then((scriptedCode) => {
+    //   jQueryDomEval(scriptedCode)
+    //     .then((iFrameHTMLProcessed) => {
+    //       /** send the data here */
+    //       // console.log(' ****************** iFrameHTML  Processed Processed: Promise ********************* \n', iFrameHTMLProcessed);
+    //         // code = iFrameHTMLProcessed;
+    //         // console.log('&*&*&*&*&*& code: *&*&*&****&**&*&*&*&&&*&*&*&* ', code)
+    //     })
+    //     .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
+    // })
+    //   .catch(error => console.error('Big error with the script injection call', error));
 
     // setTimeout(() => {
       const data = {
@@ -186,13 +251,15 @@ export default class GradeBot extends Component {
       };
 
       httpClient.testCode(data, assignmentId).then(res => {
+        console.log('data: ', data)
+        console.log('code: ', code)
         this.setState({
           passing: res.data,
           challengeSeed: [code],
         });
       }).catch((error) => {
-      console.log(`Big Big => ${error} <= Error testing Code`);
-    })
+        console.log(`Big Big => ${error} <= Error testing Code`);
+      })
     // }, 100);
   };
   
@@ -312,7 +379,7 @@ export default class GradeBot extends Component {
                   hoverColor='#1c7269'
                   disabled={loading}
                   isDisabled={loading}
-                  onClick={() => this.makeTests()}
+                  onClick={() => this.runTests()}
                 >
                   {loading ? (
                     <ClipLoader css={override} size={20} />
