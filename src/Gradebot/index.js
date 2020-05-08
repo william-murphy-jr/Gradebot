@@ -109,9 +109,7 @@ export default class GradeBot extends Component {
     // This is to get around a issue with running JSDOM on the 
     // client-side as opposed to on node.js
     // This snippet will be removed before being sent to server.
-    const jsdomLocalStorage = `$(function() {
-      window.localStorage.setItem('html',  document.head.innerHTML + "" + document.body.innerHTML);
-    });`
+    const jsdomLocalStorage = `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});`
     myScript.innerHTML = code + jsdomLocalStorage;
     iFrameHead.appendChild(myScript);
 
@@ -137,13 +135,13 @@ export default class GradeBot extends Component {
     const runScriptedCode = () => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const scriptedCode = this.injectJS(script)
+          const scriptedCode = this.injectJS(script);
           resolve(scriptedCode);
         }, 100); // Delay Needed or will throw
       });
     }
-
-
+    
+    
     const jQueryDomEval = (_script) => {
       return new Promise((resolve, reject) => {
         const { JSDOM } = jsdom;
@@ -154,7 +152,9 @@ export default class GradeBot extends Component {
         // from localStorage (this is an issue workaround)
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
-          resolve(iFrameHTML);
+          console.log("typeof iFrameHTML: ", typeof iFrameHTML)
+          const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+          resolve(iFrameHTMLRegEx);
         }, 100); 
       });
     };
@@ -163,12 +163,13 @@ export default class GradeBot extends Component {
       .then((scriptedCode) => {
         jQueryDomEval(scriptedCode)
           .then((iFrameHTML) => {
-            localStorage.remove('html');
-            console.log('iFrameHTML: Promise  \n', iFrameHTML);
+            // localStorage.removeItem('html');
+            console.log('iFrameHTML NOT Processed: Promise  \n', iFrameHTML);
+
           })
           .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
     })
-      .catch(error => console.error('Big error ', error));
+      .catch(error => console.error('Big error with the script injection call', error));
 
     // setTimeout(() => {
       const data = {
@@ -368,8 +369,6 @@ function addBootstrap() {
 // Move either all helpers to their own file of at least the CSS template
 function addJQueryPlayGroundStyles() {
   const playGroundStyles = document.createElement('style');
-  console.log(playGroundStyles)
-
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   playGroundStyles.innerHTML = playGroundCSS;
@@ -378,12 +377,10 @@ function addJQueryPlayGroundStyles() {
 
 /**
    * TODO: 
-   * 1. We need to link to static's jQuery NOT a CDN
+   * 1. We need to link to static's jQuery NOT a CDN or node_modules/jQuery
    */
   function addJQuery() {
     const jQuery = document.createElement('script');
-    // jQuery.href = './static/jquery-3.4.1.min.js'; find jQuery in static
-    
     jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
     jQuery.type = 'text/javascript';
     jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
