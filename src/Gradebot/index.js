@@ -194,7 +194,7 @@ export default class GradeBot extends Component {
 
   makeTests = async (editedData = null) => {
     let { assignmentId, code, script } = this.loadEditor()
-    this.runScriptedCode(script); //  Makes iFrame responsive or server call
+    this.runScriptedCode(script); //  Makes iFrame responsive on server call
     code = editedData || code;
     
       const data = {
@@ -332,7 +332,7 @@ export default class GradeBot extends Component {
                 }}
                 wrapEnabled={true}
                 indentedSoftWrap={false}
-                editorProps={{ $blockScrolling: true }}
+                editorProps={{ $blockScrolling: Infinity }}
                 onChange={this.onChange}
               />
               <ButtonContainer>
