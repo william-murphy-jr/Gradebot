@@ -3,11 +3,11 @@ import axios from 'axios';
 const httpClient = axios.create();
 
 httpClient.getChallenge = function(
-  // sessionId = 'bad87fee1348bd9bedc08826', // 3 test ???
-  // sessionId = 'bad87fee1348bd9acdd08826', // add a script & document.ready tag
-  // sessionId = 'bad87fee1348bd9aed708826',
+  // sessionId = 'bad87fee1348bd9bedc08826', // 2 test empty ready function 1P 1F * (Not seeing jQuery???)
+  // sessionId = 'bad87fee1348bd9acdd08826', // 3 Test -- add a script & document.ready tag 3P 0F
+  sessionId = 'bad87fee1348bd9aed708826',    // 2 Test -- remove an element 1P 1F * (Not seeing jQuery???)
   // sessionId = '5a61d23e84acdd9e42575aa3',
-  sessionId = 'bad87fee1348bd9aedc08826', // bounce & shake
+  // sessionId = 'bad87fee1348bd9aedc08826', // bounce & shake
 ) {
   return this({ method: 'get', url: `/lti/getstate/${sessionId}` });
 };

@@ -21,7 +21,7 @@ import 'brace/mode/javascript';
 import 'brace/mode/html';
 import 'brace/theme/monokai';
 
-const __DEBUG = true;
+const __DEBUG = false;
 
 const override = css`
   display: block;
@@ -94,14 +94,14 @@ export default class GradeBot extends Component {
     return result;
   }
 
-  injectJS (code, enableLocalStorage = true){
+  injectJS (code, enableLocalStorage = true) {
     code = code === '</script><script>' ? '' : code;
     const iFrameDoc = document.getElementById('iframe').contentWindow.document;
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
-
+   
     // Remove the old test script tag. NOT the one that call's the jQuery CDN
-    // Reason - We don't want to let them build up with each test submission.
+    // Reason - We don't want to let them build up with each failed test submission.
     console.log("length: ", scripts.length);
     let length = scripts.length;
     if (length > 1) { 
@@ -137,10 +137,14 @@ export default class GradeBot extends Component {
         
         // JSDOM has no done() or a promise/callback so we have to wait to grab
         // processed DOM from localStorage (this is an issue workaround) 
+        // Wait for the script to do write to localStorage
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
           localStorage.removeItem('html');
-          const iFrameHTMLRegEx = iFrameHTML && iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+          // Remove all of the links and scripts that were added for test
+          const iFrameHTMLRegEx1 = iFrameHTML && iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+          const iFrameHTMLRegEx2 = iFrameHTMLRegEx1.replace(/<link(.*?)$/img, "");
+          const iFrameHTMLRegEx = `<script>${iFrameHTMLRegEx2}`;
           resolve(iFrameHTMLRegEx);
         }, 100); 
       });
@@ -150,12 +154,8 @@ export default class GradeBot extends Component {
     .then((scriptedCode) => {
       jQueryDomEval(scriptedCode)
         .then((iFrameHTMLProcessed) => {
-          /** send the data here */
-          // console.log(' ****************** iFrameHTML  Processed Processed: Promise ********************* \n', iFrameHTMLProcessed);
-            // code = iFrameHTMLProcessed;
-            // console.log('&*&*&*&*&*& code: *&*&*&****&**&*&*&*&&&*&*&*&* ', code)
-            console.log('typeof iFrameHTMLProcessed *&^%$%^&^%$% ', typeof iFrameHTMLProcessed)
-            this.makeTests(iFrameHTMLProcessed);
+          __DEBUG && console.log('iFrameHTMLProcessed OUTPUT ****=>', iFrameHTMLProcessed);
+          this.makeTests(iFrameHTMLProcessed);
         })
         .catch((error) => {console.error(`${error} Error retrieving iFrame data from storage`)});
     })
@@ -211,8 +211,8 @@ export default class GradeBot extends Component {
       };
 
       httpClient.testCode(data, assignmentId).then(res => {
-        console.log('data: ', data)
-        console.log('code: ', code)
+        __DEBUG && console.log('data: ', data)
+        __DEBUG && console.log('code: ', code)
         this.setState({
           passing: res.data,
           challengeSeed: [code],
