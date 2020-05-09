@@ -128,14 +128,6 @@ export default class GradeBot extends Component {
 
   runTests = (enableLocalStorage = false) => {
     let { assignmentId, code, script } = this.loadEditor();     
-    const runScriptedCode = (enableLocalStorage) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const scriptedCode = this.injectJS(script, enableLocalStorage);
-          resolve(scriptedCode);
-        }, 100); // Delay Needed or will throw - DOM Issue?
-      });
-    }
     
     const jQueryDomEval = (_script) => {
       return new Promise((resolve, reject) => {
@@ -154,7 +146,7 @@ export default class GradeBot extends Component {
       });
     };
     
-    runScriptedCode(true)
+    this.runScriptedCode(script, true)
     .then((scriptedCode) => {
       jQueryDomEval(scriptedCode)
         .then((iFrameHTMLProcessed) => {
