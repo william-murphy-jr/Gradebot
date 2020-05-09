@@ -255,8 +255,8 @@ export default class GradeBot extends Component {
       });
     });
     this.challengeSeed = this.state.assignment.challengeSeed;
-    let { assignmentId, code, script } = this.loadEditor()
-    this.runScriptedCode(script); 
+    // let { assignmentId, code, script } = this.loadEditor()
+    // this.runScriptedCode(script); 
     this.makeTests();
   }
 
