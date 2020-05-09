@@ -95,6 +95,7 @@ export default class GradeBot extends Component {
   }
 
   injectJS (code, enableLocalStorage = true){
+    code = code === '</script><script>' ? '' : code;
     const iFrameDoc = document.getElementById('iframe').contentWindow.document;
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
@@ -198,10 +199,10 @@ export default class GradeBot extends Component {
     });
   }
 
-  makeTests = async (editorData = null) => {
+  makeTests = async (editedData = null) => {
     let { assignmentId, code, script } = this.loadEditor()
-    // this.runScriptedCode(script); 
-    code = editorData || code;
+    this.runScriptedCode(script); //  Makes iFrame responsive or server call
+    code = editedData || code;
     
     // setTimeout(() => {
       const data = {
