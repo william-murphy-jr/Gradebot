@@ -384,7 +384,7 @@ function addBootstrap() {
   const bootstrap = document.createElement('link');
   // bootstrap.href = 
   //   'https://static.tlmworks.org/track1/bootstrap/bootstrap3/css/bootstrap.min.css';
-  bootstrap.href = 'bootstrap/dist/css/bootstrap.css'
+  bootstrap.href = 'libraries/bootstrap/dist/css/bootstrap.css'
   bootstrap.rel = 'stylesheet';
   bootstrap.type = 'text/css';
   bootstrap.integrity = "";
