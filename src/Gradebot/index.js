@@ -398,7 +398,8 @@ function addBootstrap() {
 // Move either all helpers to their own file of at least the CSS template
 function addAnimateCSSLibrary() {
   const animateCSSLib = document.createElement('link');
-  animateCSSLib.href = 'libraries/animate/animate.css';
+  // animate.compat.css is a 4.0 lib that's backwards compatible w/ver-3.7
+  animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
   animateCSSLib.rel = 'stylesheet';
   animateCSSLib.type = 'text/css';
   animateCSSLib.integrity = '';
