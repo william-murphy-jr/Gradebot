@@ -380,59 +380,43 @@ export default class GradeBot extends Component {
 } // END OF class Gradebot
 
 // Helper Functions
-
+// *** TODO *** Move either all helpers to their own file of at least the CSS template
 function addBootstrap() {
   const bootstrap = document.createElement('link');
-  // bootstrap.href = 
-  //   'https://static.tlmworks.org/track1/bootstrap/bootstrap3/css/bootstrap.min.css';
   bootstrap.href = 'libraries/bootstrap/dist/css/bootstrap.css'
   bootstrap.rel = 'stylesheet';
   bootstrap.type = 'text/css';
-  bootstrap.integrity = "";
-  bootstrap.crossorigin = "anonymous";
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(bootstrap);
 }
 
-// Move either all helpers to their own file of at least the CSS template
 function addAnimateCSSLibrary() {
   const animateCSSLib = document.createElement('link');
-  // animate.compat.css is a 4.0 lib that's backwards compatible w/ver-3.7
+  // animate.compat.css is a 4.0 lib file that's backwards compatible w/ver-3.7
+  // v4.0 introduced breaking changes.
   animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
   animateCSSLib.rel = 'stylesheet';
   animateCSSLib.type = 'text/css';
-  animateCSSLib.integrity = '';
-  animateCSSLib.crossorigin = 'anonymous';
   const head = document.getElementById('iframe').contentWindow
     .document.head;
     head.append(animateCSSLib);
 }
-// Move either all helpers to their own file of at least the CSS template
 function addJQueryPlayGroundStyles() {
   const playGroundStyles = document.createElement('link');
   playGroundStyles.href = 'styles/playGroundStyles.css';
   playGroundStyles.rel = 'stylesheet';
   playGroundStyles.type = 'text/css';
-  playGroundStyles.integrity = '';
-  playGroundStyles.crossorigin = 'anonymous';
   const head = document.getElementById('iframe').contentWindow
     .document.head;
   head.append(playGroundStyles);
 }
 
-/**
-   * TODO: 
-   * 1. We need to link to static's jQuery NOT a CDN or node_modules/jQuery
-   */
-  function addJQuery() {
-    const jQuery = document.createElement('script');
-    jQuery.src = "https://code.jquery.com/jquery-3.5.0.js";
-    jQuery.type = 'text/javascript';
-    jQuery.integrity = "sha256-r/AaFHrszJtwpe+tHyNi/XCfMxYpbsRg2Uqn0x3s2zc=";
-    jQuery.crossOrigin = "anonymous";
-  
-    const head = document.getElementById('iframe').contentWindow
-      .document.head;
-    head.append(jQuery);
-  }
+function addJQuery() {
+  const jQuery = document.createElement('script');
+  jQuery.src = 'libraries/jquery/jquery.js';
+  jQuery.type = 'text/javascript';
+  const head = document.getElementById('iframe').contentWindow
+    .document.head;
+  head.append(jQuery);
+}
