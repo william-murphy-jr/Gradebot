@@ -147,7 +147,7 @@ export default class GradeBot extends Component {
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
           localStorage.removeItem('html');
-          const iFrameHTMLRegEx = iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
+          const iFrameHTMLRegEx = iFrameHTML && iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
           resolve(iFrameHTMLRegEx);
         }, 100); 
       });
