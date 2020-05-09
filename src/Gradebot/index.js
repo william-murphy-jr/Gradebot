@@ -229,6 +229,7 @@ export default class GradeBot extends Component {
     this.sessionId = params[2];
     addBootstrap();
     addJQueryPlayGroundStyles();
+    addAnimateCSSLibrary();
     addJQuery();
 
     await httpClient.getChallenge(this.sessionId).then(res => {
@@ -395,6 +396,18 @@ function addBootstrap() {
 }
 
 // Move either all helpers to their own file of at least the CSS template
+function addAnimateCSSLibrary() {
+  const animateCSSLib = document.createElement('link');
+  animateCSSLib.href = 'libraries/animate/animate.css';
+  animateCSSLib.rel = 'stylesheet';
+  animateCSSLib.type = 'text/css';
+  animateCSSLib.integrity = '';
+  animateCSSLib.crossorigin = 'anonymous';
+  const head = document.getElementById('iframe').contentWindow
+    .document.head;
+    head.append(animateCSSLib);
+}
+// Move either all helpers to their own file of at least the CSS template
 function addJQueryPlayGroundStyles() {
   const playGroundStyles = document.createElement('link');
   playGroundStyles.href = 'styles/playGroundStyles.css';
@@ -404,7 +417,6 @@ function addJQueryPlayGroundStyles() {
   playGroundStyles.crossorigin = 'anonymous';
   const head = document.getElementById('iframe').contentWindow
     .document.head;
-  playGroundStyles.innerHTML = playGroundCSS;
   head.append(playGroundStyles);
 }
 
@@ -423,4 +435,3 @@ function addJQueryPlayGroundStyles() {
       .document.head;
     head.append(jQuery);
   }
-  
