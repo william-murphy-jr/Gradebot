@@ -145,6 +145,7 @@ export default class GradeBot extends Component {
           const iFrameHTMLRegEx1 = iFrameHTML && iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
           const iFrameHTMLRegEx2 = iFrameHTMLRegEx1.replace(/<link(.*?)$/img, "");
           const iFrameHTMLRegEx = `<script>${iFrameHTMLRegEx2}`;
+          __DEBUG && console.log('iFrameHTMLRegEx output from JSDOM: ', iFrameHTMLRegEx);
           resolve(iFrameHTMLRegEx);
         }, 100); 
       });
@@ -196,7 +197,6 @@ export default class GradeBot extends Component {
     this.runScriptedCode(script); //  Makes iFrame responsive or server call
     code = editedData || code;
     
-    // setTimeout(() => {
       const data = {
         code,
         head:
@@ -220,7 +220,6 @@ export default class GradeBot extends Component {
       }).catch((error) => {
         console.log(`Big Big => ${error} <= Error testing Code`);
       })
-    // }, 100);
   };
   
   async componentDidMount() {
