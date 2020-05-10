@@ -355,7 +355,7 @@ export default class GradeBot extends Component {
                   isDisabled={loading}
                   disabled={loading}
                 >
-                  Rest Code
+                  Reset Code
                 </Button>
               </ButtonContainer>
             </div>
