@@ -251,6 +251,7 @@ export default class GradeBot extends Component {
   }
 
   onReset = () => {
+    console.log('onReset Clicked');
     const iframeDoc = document.getElementById('iframe').contentWindow
       .document;
     this.setState(prevState => ({
@@ -349,7 +350,7 @@ export default class GradeBot extends Component {
                 </Button>
                 <Button
                   color='lightpink'
-                  onClick={() => this.onReset}
+                  onClick={() => this.onReset()}
                   hoverColor='#ce3a51'
                   isDisabled={loading}
                   disabled={loading}
