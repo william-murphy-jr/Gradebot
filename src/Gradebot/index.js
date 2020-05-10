@@ -14,8 +14,6 @@ import httpClient from '../httpClient.js';
 import jsdom from 'jsdom';
 
 import iPhone from './iphone.png';
-import playGroundCSS from './playGroundStyles';
-
 
 import 'brace/mode/javascript';
 import 'brace/mode/html';
@@ -127,7 +125,7 @@ export default class GradeBot extends Component {
   }
 
   runTests = (enableLocalStorage = false) => {
-    let { assignmentId, code, script } = this.loadEditor();     
+    let { script } = this.loadEditor();     
     
     const jQueryDomEval = (_script) => {
       return new Promise((resolve, reject) => {
