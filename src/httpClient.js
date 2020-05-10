@@ -8,12 +8,12 @@ httpClient.getChallenge = function(
   // sessionId = 'bad87fee1348bd9aed708826', // 2 Test 1P/F -- remove an element  (**Check Assert**)
   // sessionId = '5a61d23e84acdd9e42575aa3', // Blank jQuery intro page
   // sessionId = 'bad87fee1348bd9aedc08826', // 2 2P/F Test  bounce & shake  *** DEFAULT TEST *** 
-  // sessionId = 'bad87fee1348bd9aecb08826', // 2 Test  Use jQuery to modify the entire page 
+  sessionId = 'bad87fee1348bd9aecb08826', // 2 Test  Use jQuery to modify the entire page Need to Add <body></body> tag to wrap test
 
   // sessionId = '',  //  T Test P/F Target 
   // sessionId = '',  //  T Test P/F Target 
-  sessionId = 'bad87fee1348bd9aed608826',  //  3 T Test 3P/F Target Use appendTo to move elements
-  // sessionId = 'bad87fee1348bd9aed508826',  //  3 Test 3P/F Clone an Element
+  // sessionId = 'bad87fee1348bd9aed608826',  //  3 T Test 3P/F Target Use appendTo to move elements
+  // // sessionId = 'bad87fee1348bd9aed508826',  //  3 Test 3P/F Clone an Element
   // sessionId = 'bad87fee1348bd9aed308826', //  3  Test 3P/1F Target the parent of an element using jQuery (**Check Assert**)
   // sessionId = 'bad87fee1348bd9aed208826', // 3 Test 3P/F Target the children of a jQuery element  change rgb(255, 165, 0) to orange
   // sessionId = 'bad87fee1348bd9aed108826', //  4 Test 4P/F Use jQuery to modify the entire page 
