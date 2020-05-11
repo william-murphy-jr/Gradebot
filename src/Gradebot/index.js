@@ -245,8 +245,6 @@ export default class GradeBot extends Component {
       });
     });
     this.challengeSeed = this.state.assignment.challengeSeed;
-    // let { assignmentId, code, script } = this.loadEditor()
-    // this.runScriptedCode(script); 
     this.makeTests();
   }
 
@@ -392,8 +390,8 @@ function addBootstrap() {
 
 function addAnimateCSSLibrary() {
   const animateCSSLib = document.createElement('link');
-  // animate.compat.css is a 4.0 lib file that's backwards compatible w/ver-3.7
-  // v4.0 introduced breaking changes.
+  // animate.compat.css is a 4.0 lib file that's backwards
+  // compatible w/ver-3.7 the v4.0 introduced breaking changes.
   animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
   animateCSSLib.rel = 'stylesheet';
   animateCSSLib.type = 'text/css';
