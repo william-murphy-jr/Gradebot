@@ -114,7 +114,8 @@ export default class GradeBot extends Component {
     // We will use localStorage to save the contents of the JSDOM.
     // This is to get around an issue with running JSDOM on the 
     // client-side as opposed to on node.js
-    // This snippet will be removed before being sent to server.
+    // This snippet will be removed before being sent to server. 
+    // Leaving it in does not affect the server or it grader.
     const jsdomLocalStorage = enableLocalStorage ? `$(function(){window.localStorage.setItem('html',document.head.innerHTML+''+document.body.innerHTML);});` : '';
     myScript.innerHTML = code + jsdomLocalStorage;
     iFrameHead.appendChild(myScript);
@@ -216,7 +217,7 @@ export default class GradeBot extends Component {
           challengeSeed: [code],
         });
       }).catch((error) => {
-        console.log(`Big Big => ${error} <= Error testing Code`);
+        console.error(`Big Big => ${error} <= Error testing Code`);
       })
   };
   
