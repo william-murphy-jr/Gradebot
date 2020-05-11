@@ -254,7 +254,7 @@ export default class GradeBot extends Component {
       .document;
     this.setState(prevState => ({
       challengeSeed: this.challengeSeed,
-    }));
+    }), this.makeTests ); // Use callback to re-animate the iframe
     iframeDoc.body.innerHTML = this.challengeSeed.join('\n');
   };
 
