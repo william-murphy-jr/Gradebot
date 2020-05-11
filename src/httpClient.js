@@ -5,9 +5,9 @@ const httpClient = axios.create();
 httpClient.getChallenge = function(
   // sessionId = 'bad87fee1348bd9bedc08826', // 2 Test 1P/1F test empty ready function 1P 1F  (**Check Assert**)
   // sessionId = 'bad87fee1348bd9acdd08826', // 3 3P/F Test -- add a script & document.ready tag 3P 0F
-  // sessionId = 'bad87fee1348bd9aed708826', // 2 Test 1P/F -- remove an element  (**Check Assert**) #960
+  sessionId = 'bad87fee1348bd9aed708826', // 2 Test 1P/F -- remove an element  (**Check Assert**) #960
   // sessionId = '5a61d23e84acdd9e42575aa3', // Blank jQuery intro page
-  sessionId = 'bad87fee1348bd9aedc08826', // 2 2P/F Test  bounce & shake  *** DEFAULT TEST *** 
+  // sessionId = 'bad87fee1348bd9aedc08826', // 2 2P/F Test  bounce & shake  *** DEFAULT TEST *** 
   
   // sessionId = '',  //  T Test P/F Target 
   // sessionId = '',  //  T Test P/F Target 
