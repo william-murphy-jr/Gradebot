@@ -98,9 +98,9 @@ export default class GradeBot extends Component {
     const iFrameHead = iFrameDoc.head;
     const scripts = iFrameDoc.scripts;
    
-    // Remove the old test script tag. NOT the one that call's the jQuery CDN
+    // Remove the old test script tag. NOT the one that call's the jQuery
     // Reason - We don't want to let them build up with each failed test submission.
-    console.log("length: ", scripts.length);
+    __DEBUG && console.log("length: ", scripts.length);
     let length = scripts.length;
     if (length > 1) { 
       while (length > 1) {
@@ -393,7 +393,7 @@ function addAnimateCSSLibrary() {
   const animateCSSLib = document.createElement('link');
   // animate.compat.css is a 4.0 lib file that's backwards
   // compatible w/ver-3.7 the v4.0 introduced breaking changes.
-  animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
+  animateCSSLib.href = 'libraries/animate/animate.css'; 
   animateCSSLib.rel = 'stylesheet';
   animateCSSLib.type = 'text/css';
   const head = document.getElementById('iframe').contentWindow
