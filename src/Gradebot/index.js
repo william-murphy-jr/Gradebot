@@ -339,7 +339,7 @@ export default class GradeBot extends Component {
                   hoverColor='#1c7269'
                   disabled={loading}
                   isDisabled={loading}
-                  onClick={() => this.runTests()}
+                  onClick={ this.runTests }
                 >
                   {loading ? (
                     <ClipLoader css={override} size={20} />
@@ -349,7 +349,7 @@ export default class GradeBot extends Component {
                 </Button>
                 <Button
                   color='lightpink'
-                  onClick={() => this.onReset()}
+                  onClick={ this.onReset }
                   hoverColor='#ce3a51'
                   isDisabled={loading}
                   disabled={loading}
