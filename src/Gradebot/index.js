@@ -393,7 +393,7 @@ function addAnimateCSSLibrary() {
   const animateCSSLib = document.createElement('link');
   // animate.compat.css is a 4.0 lib file that's backwards
   // compatible w/ver-3.7 the v4.0 introduced breaking changes.
-  animateCSSLib.href = 'libraries/animate/animate.css'; 
+  animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
   animateCSSLib.rel = 'stylesheet';
   animateCSSLib.type = 'text/css';
   const head = document.getElementById('iframe').contentWindow
