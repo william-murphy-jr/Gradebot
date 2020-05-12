@@ -14,6 +14,10 @@ import httpClient from '../httpClient.js';
 import jsdom from 'jsdom';
 
 import iPhone from './iphone.png';
+import { addBootstrap,
+  addAnimateCSSLibrary,
+  addJQueryPlayGroundStyles,
+  addJQuery } from './helperUtils';
 
 import 'brace/mode/javascript';
 import 'brace/mode/html';
@@ -377,44 +381,3 @@ export default class GradeBot extends Component {
   }
 } // END OF class Gradebot
 
-// Helper Functions
-// *** TODO *** Move either all helpers to their own file of at least the CSS template
-function addBootstrap() {
-  const bootstrap = document.createElement('link');
-  bootstrap.href = 'libraries/bootstrap/dist/css/bootstrap.css'
-  bootstrap.rel = 'stylesheet';
-  bootstrap.type = 'text/css';
-  const head = document.getElementById('iframe').contentWindow
-    .document.head;
-  head.append(bootstrap);
-}
-
-function addAnimateCSSLibrary() {
-  const animateCSSLib = document.createElement('link');
-  // animate.compat.css is a 4.0 lib file that's backwards
-  // compatible w/ver-3.7 the v4.0 introduced breaking changes.
-  animateCSSLib.href = 'libraries/animate/animate.compat.css'; 
-  animateCSSLib.rel = 'stylesheet';
-  animateCSSLib.type = 'text/css';
-  const head = document.getElementById('iframe').contentWindow
-    .document.head;
-    head.append(animateCSSLib);
-}
-function addJQueryPlayGroundStyles() {
-  const playGroundStyles = document.createElement('link');
-  playGroundStyles.href = 'styles/playGroundStyles.css';
-  playGroundStyles.rel = 'stylesheet';
-  playGroundStyles.type = 'text/css';
-  const head = document.getElementById('iframe').contentWindow
-    .document.head;
-  head.append(playGroundStyles);
-}
-
-function addJQuery() {
-  const jQuery = document.createElement('script');
-  jQuery.src = 'libraries/jquery/jquery.js';
-  jQuery.type = 'text/javascript';
-  const head = document.getElementById('iframe').contentWindow
-    .document.head;
-  head.append(jQuery);
-}
