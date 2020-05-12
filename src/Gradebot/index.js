@@ -227,8 +227,8 @@ export default class GradeBot extends Component {
     const params = window.location.pathname.split('/');
     this.sessionId = params[2];
     addBootstrap();
-    addJQueryPlayGroundStyles();
     addAnimateCSSLibrary();
+    addJQueryPlayGroundStyles();
     addJQuery();
 
     await httpClient.getChallenge(this.sessionId).then(res => {
