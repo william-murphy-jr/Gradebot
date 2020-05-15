@@ -140,13 +140,13 @@ export default class GradeBot extends Component {
         
         // JSDOM has no done() or a promise/callback so we have to wait to grab
         // processed DOM from localStorage (this is an issue workaround) 
-        // Wait for the script to do write to localStorage
+        // Wait for the script to write to localStorage
         setTimeout(() => {
           const iFrameHTML = localStorage.getItem('html');
           localStorage.removeItem('html');
           // Remove all of the links and scripts that were added for test
           const iFrameHTMLRegEx1 = iFrameHTML && iFrameHTML.replace(/\$\(function\(\){window.localStorage.setItem\('html',document.head.innerHTML\+''\+document.body.innerHTML\);\}\);/g, '');
-          const iFrameHTMLRegEx2 = iFrameHTMLRegEx1.replace(/<link(.*?)$/img, "");
+          const iFrameHTMLRegEx2 = iFrameHTMLRegEx1 && iFrameHTMLRegEx1.replace(/<link(.*?)$/img, "");
           const iFrameHTMLRegEx = `<script>${iFrameHTMLRegEx2}`;
           __DEBUG && console.log('iFrameHTMLRegEx output from JSDOM: ', iFrameHTMLRegEx);
           resolve(iFrameHTMLRegEx);
@@ -254,7 +254,6 @@ export default class GradeBot extends Component {
   }
 
   onReset = () => {
-    console.log('onReset Clicked');
     const iframeDoc = document.getElementById('iframe').contentWindow
       .document;
     this.setState(prevState => ({

@@ -1,5 +1,4 @@
 // Helper Functions
-// *** TODO *** Move either all helpers to their own file of at least the CSS template
 export function addBootstrap() {
   const bootstrap = document.createElement('link');
   bootstrap.href = 'libraries/bootstrap/dist/css/bootstrap.css'
