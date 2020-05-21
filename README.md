@@ -20,3 +20,13 @@ Install instructions: to come
 ### Credits:
 - LTI integration: https://github.com/omsmith/ims-lti
 - Example coding challenges: https://github.com/freecodecamp/freecodecamp
+
+### Issues
+
+On fresh npm installs the node server will sometimes throw the following error when receiving test data from the frontend.
+
+```bash
+JavaScript TypeError: require(...).jsdom is not a function
+```
+
+ To fix this reinstall the `node-jquery` and then `jquery` node modules. You may have to do this several times. The most probable cause of this is the animate.css library which seems to install a jquery library that is incompatible with the jsdom module as we implement it. The `animate.css` library that should be used for this project is the old v3.7. It should be noted that the newer `animate.css` library v4.0+ uses new class names that are not compatible with the test that the Canvas LMS carries out and it's use will **not** stop the jsdom node server issues.
